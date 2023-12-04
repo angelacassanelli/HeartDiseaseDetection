@@ -1,63 +1,75 @@
 %% Data Exploration
 
-function datasetOutput = dataExploration(datasetInput)
+function dataset = dataExploration(dataset)
 
     disp('Data Exploration');
-
-    % Visualizzazione delle prime 8 righe e le statistiche del dataset.
-    disp('Iniatial Dataset');
-    dataStats(datasetInput);
-
-    % Conversione delle features categoriche in numeriche.
     
-    categoricalFeatures = {
-        'State'
-        'Sex'
-        'GeneralHealth'
-        'LastCheckupTime'
-        'PhysicalActivities' 
-        'HadHeartAttack'
-        'HadAngina'
-        'HadStroke' 
-        'HadAsthma'
-        'HadSkinCancer'
-        'HadCOPD'
-        'HadDepressiveDisorder'
-        'HadKidneyDisease'
-        'HadArthritis'
-        'HadDiabetes' 
-        'DeafOrHardOfHearing'
-        'BlindOrVisionDifficulty'
-        'DifficultyConcentrating'
-        'DifficultyWalking'
-        'DifficultyDressingBathing'
-        'DifficultyErrands'
-        'SmokerStatus'
-        'ECigaretteUsage'
-        'ChestScan'
-        'RaceEthnicityCategory'
-        'AgeCategory'
-        'AlcoholDrinkers'
-        'HIVTesting'
-        'FluVaxLast12'
-        'PneumoVaxEver'
-        'PneumoVaxEver' 
-        'TetanusLast10Tdap'
-        'HighRiskLastYear'
-        'CovidPos'
-    };
+    disp('Iniatial Dataset');
+    head(dataset);
+    summary(dataset);   
 
-    datasetInput = categorical2numericalFeatures(datasetInput, categoricalFeatures);
+    allFeatures = string(dataset.Properties.VariableNames);
 
+    categoricalFeatures = [
+        "State"
+        "Sex"
+        "GeneralHealth"
+        "LastCheckupTime"
+        "PhysicalActivities"
+        "RemovedTeeth"
+        "HadHeartAttack"
+        "HadAngina"
+        "HadStroke" 
+        "HadAsthma"
+        "HadSkinCancer"
+        "HadCOPD"
+        "HadDepressiveDisorder"
+        "HadKidneyDisease"
+        "HadArthritis"
+        "HadDiabetes" 
+        "DeafOrHardOfHearing"
+        "BlindOrVisionDifficulty"
+        "DifficultyConcentrating"
+        "DifficultyWalking"
+        "DifficultyDressingBathing"
+        "DifficultyErrands"
+        "SmokerStatus"
+        "ECigaretteUsage"
+        "ChestScan"
+        "RaceEthnicityCategory"
+        "AgeCategory"
+        "AlcoholDrinkers"
+        "HIVTesting"
+        "FluVaxLast12"
+        "PneumoVaxEver"
+        "PneumoVaxEver" 
+        "TetanusLast10Tdap"
+        "HighRiskLastYear"
+        "CovidPos"
+    ];
 
-    % Visualizzazione delle prime 8 righe e delle statistiche del dataset.
+    % convert categorical features to numerical
+    for i = 1 : size(categoricalFeatures)
+        featureName = categoricalFeatures(i);
+        dataset.(featureName) = grp2idx(dataset.(featureName));
+    end
+
     disp('Dataset with all numerical features');
-    dataStats(datasetInput);
+    head(dataset);
+    summary(dataset);
 
-    % Visualizzazione dei grafici per esplorare la distribuzione dei dati. 
-    plotHistograms(datasetInput, 'Data Exploration');
+    % plot data distibution with istograms
+    totalSubplots = length(allFeatures);
+    numRows = 5;
+    numCols = 8;
 
-    % Return output 
-    datasetOutput = datasetInput;
+    fig = figure;
+    fig.Name = "Data Exploration";
+
+    for i = 1 : totalSubplots
+        subplot(numRows, numCols, i);
+        histogram(dataset.(allFeatures{i}));
+        title(allFeatures{i}); 
+    end   
 
 end
