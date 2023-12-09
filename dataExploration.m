@@ -9,44 +9,8 @@ function dataset = dataExploration(dataset)
     summary(dataset);   
 
     allFeatures = string(dataset.Properties.VariableNames);
+    categoricalFeatures = ["Sex"; "ChestPainType"; "RestingECG"; "ExerciseAngina"; "ST_Slope"];
 
-    categoricalFeatures = [
-        "State"
-        "Sex"
-        "GeneralHealth"
-        "LastCheckupTime"
-        "PhysicalActivities"
-        "RemovedTeeth"
-        "HadHeartAttack"
-        "HadAngina"
-        "HadStroke" 
-        "HadAsthma"
-        "HadSkinCancer"
-        "HadCOPD"
-        "HadDepressiveDisorder"
-        "HadKidneyDisease"
-        "HadArthritis"
-        "HadDiabetes" 
-        "DeafOrHardOfHearing"
-        "BlindOrVisionDifficulty"
-        "DifficultyConcentrating"
-        "DifficultyWalking"
-        "DifficultyDressingBathing"
-        "DifficultyErrands"
-        "SmokerStatus"
-        "ECigaretteUsage"
-        "ChestScan"
-        "RaceEthnicityCategory"
-        "AgeCategory"
-        "AlcoholDrinkers"
-        "HIVTesting"
-        "FluVaxLast12"
-        "PneumoVaxEver"
-        "PneumoVaxEver" 
-        "TetanusLast10Tdap"
-        "HighRiskLastYear"
-        "CovidPos"
-    ];
 
     % convert categorical features to numerical
     for i = 1 : size(categoricalFeatures)
@@ -58,10 +22,11 @@ function dataset = dataExploration(dataset)
     head(dataset);
     summary(dataset);
 
+    
     % plot data distibution with istograms
     totalSubplots = length(allFeatures);
-    numRows = 5;
-    numCols = 8;
+    numRows = 3;
+    numCols = 4;
 
     fig = figure;
     fig.Name = "Data Exploration";
