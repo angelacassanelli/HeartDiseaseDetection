@@ -40,7 +40,7 @@ disp('Data Preprocessing');
         iqrValues = q75 - q25;
 
         % Specifica la soglia IQR oltre la quale considerare un valore come outlier
-        sogliaIQR = 1.5; % Puoi regolare questo valore in base alle tue esigenze
+        sogliaIQR = 3; % Puoi regolare questo valore in base alle tue esigenze
 
         % Trova gli indici degli outliers
         outliersIndices = abs(dataset.(currentFeature) - median(dataset.(currentFeature))) > sogliaIQR * iqrValues;
