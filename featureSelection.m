@@ -1,7 +1,8 @@
 function [x, y] = featureSelection(dataset)
 
+    disp('Perform feature selection')
+    
     allFeatures = dataset.Properties.VariableNames;
-    disp(allFeatures)
     targetFeature = 'HeartDisease';
     includedFeatures = setdiff(allFeatures, targetFeature); % select all features except targetFeature
     

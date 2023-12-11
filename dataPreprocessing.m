@@ -1,6 +1,6 @@
 function dataset = dataPreprocessing(dataset)
 
-disp('Data Preprocessing');
+    disp('Data Preprocessing');
 
     allFeatures = string(dataset.Properties.VariableNames);
     categoricalFeatures = ["Sex"; "ChestPainType"; "RestingECG"; "ExerciseAngina"; "ST_Slope"];

@@ -1,5 +1,7 @@
 function gmm(trainingSet, testSet)
         
+    disp('Perform GMM anomaly detection')
+    
     % Fit a Gaussian Mixture Model
     trainingSet = table2array(trainingSet);
     nComponents = 11; % You may need to adjust the number of components based on your data

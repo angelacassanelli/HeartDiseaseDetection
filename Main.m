@@ -49,6 +49,3 @@ predictionsWithPca = supportVectorMachine(reducedXTrain, reducedXTest, reducedYT
 %% Results
 computeMetrics(yTest, predictionsWithoutPca)
 computeMetrics(reducedYTest, predictionsWithPca)
-
-rocCurve(yTest, predictionsWithoutPca)
-rocCurve(reducedYTest, predictionsWithPca)

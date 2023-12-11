@@ -1,5 +1,7 @@
 function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
 
+    disp('Perform Logistic Regression from scratch')
+    
     % Inizializza i parametri del modello
     theta = zeros(size(xTrain, 2), 1);
 
@@ -46,7 +48,7 @@ function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iter
 
 
     % Visualizza i parametri appresi
-    disp('Parametri appresi:');
+    disp('Parametri appresi:' );    
     disp(theta);
 
     % Calcola le predizioni per il set di test

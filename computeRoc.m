@@ -1,3 +1,0 @@
-function roc = computeRoc()
-
-end
