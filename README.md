@@ -18,13 +18,14 @@ The main objective of this project is the development of a Machine Learning mode
 6. Logistic Regression from Scratch
 7. Logistic Regression with Built-in Functions
 8. GMM Clustering for Anomaly Detection
-9. Results
+9. SVM 
+10. Results
 
 ## TODO:
 
 - k-fold cross validation 
 - roc curve [?]
-- svm [?]
+
 
 ## 🚀 About Me
 I'm a MSc Computer Science Engineering Student at Polytechnic Univeristy of Bari and this is my project work for Statistical and Matematical Methods exam.

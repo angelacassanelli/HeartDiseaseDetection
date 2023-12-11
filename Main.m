@@ -39,7 +39,8 @@ predictionsWithoutPca = logisticRegressionBuiltIn(trainingSet, testSet, withoutP
 predictionsWithPca = logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, withPca);
 
 %% GMM Clustering for Anomaly Detection
-% gmm(dataset)
+% gmm(trainingSet, testSet)
+% gmm(reducedTrainingSet, reducedTestSet)
 
 %% SVM 
 predictionsWithoutPca = supportVectorMachine(xTrain, xTest, yTrain);
@@ -48,3 +49,6 @@ predictionsWithPca = supportVectorMachine(reducedXTrain, reducedXTest, reducedYT
 %% Results
 computeMetrics(yTest, predictionsWithoutPca)
 computeMetrics(reducedYTest, predictionsWithPca)
+
+rocCurve(yTest, predictionsWithoutPca)
+rocCurve(reducedYTest, predictionsWithPca)
