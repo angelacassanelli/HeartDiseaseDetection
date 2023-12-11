@@ -23,7 +23,8 @@ The main objective of this project is the development of a Machine Learning mode
 
 ## TODO:
 
-- k-fold cross validation 
+- grid search
+- validation
 
 
 ## 🚀 About Me
