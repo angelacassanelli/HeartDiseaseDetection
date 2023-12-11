@@ -1,4 +1,4 @@
-function logisticRegressionBuiltIn(trainingSet, testSet, withPca)
+function predictions = logisticRegressionBuiltIn(trainingSet, testSet, withPca)
 
     % Crea un modello di regressione logistica binaria
     if withPca        
@@ -13,11 +13,6 @@ function logisticRegressionBuiltIn(trainingSet, testSet, withPca)
     disp(logisticModel);
     
     % Fai previsioni sul set di dati
-    predictions = predict(logisticModel, testSet);
-    
-    % Calcola le performance del modello (ad esempio, l'accuratezza)
-    responseVariable = testSet.HeartDisease;
-    accuracy = sum(round(predictions) == responseVariable) / numel(responseVariable);
-    disp(['Accuracy: ', num2str(accuracy)]);
+    predictions = predict(logisticModel, testSet);    
 
 end

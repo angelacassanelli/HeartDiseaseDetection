@@ -1,7 +1,7 @@
-function [theta, costHistory] = logisticRegressionFromScratch(trainingSet, iterations, alpha, lambda, withRegularization)
+function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
     
-    [xTrain, yTrain] = featureSelection(trainingSet);
     xTrain = table2array(xTrain);
+    xTest = table2array(xTest);
     yTrain = table2array(yTrain);
 
     % Inizializza i parametri del modello
@@ -17,10 +17,10 @@ function [theta, costHistory] = logisticRegressionFromScratch(trainingSet, itera
     for iter = 1:iterations
         
         % Calcola la funzione di ipotesi
-        h = sigmoid(xTrain * theta);
+        preds = sigmoid(xTrain * theta);
 
         % Calcola l'errore
-        error = h - yTrain;
+        error = preds - yTrain;
 
         if withRegularization
 
@@ -32,7 +32,7 @@ function [theta, costHistory] = logisticRegressionFromScratch(trainingSet, itera
             regularizationTerm = (lambda / (2 * m)) * sum(theta(2:end).^2);
     
             % Calcola la funzione di costo (log-costo) con regolarizzazione
-            cost = -(1/m) * sum(yTrain .* log(h) + (1 - yTrain) .* log(1 - h)) + regularizationTerm;
+            cost = -(1/m) * sum(yTrain .* log(preds) + (1 - yTrain) .* log(1 - preds)) + regularizationTerm;
         
         else
 
@@ -40,25 +40,29 @@ function [theta, costHistory] = logisticRegressionFromScratch(trainingSet, itera
             theta = theta - alpha * (1/m) * (xTrain' * error);
     
             % Calcola la funzione di costo (log-costo)
-            cost = -(1/m) * sum(yTrain .* log(h) + (1 - yTrain) .* log(1 - h));
+            cost = -(1/m) * sum(yTrain .* log(preds) + (1 - yTrain) .* log(1 - preds));
 
         end
         
         costHistory(iter) = cost;
 
-
-        % Visualizza i parametri appresi
-        disp('Parametri appresi:');
-        disp(theta);
-        
-        % Visualizza la storia della funzione di costo
-        figure;
-        plot(1:iterations, costHistory, '-b', 'LineWidth', 2);
-        xlabel('Numero di iterazioni');
-        ylabel('Funzione di costo');
-        title('Convergenza della regressione logistica');
-
     end
+
+
+    % Visualizza i parametri appresi
+    disp('Parametri appresi:');
+    disp(theta);
+
+    % Calcola le predizioni per il set di test
+    predictions = sigmoid(xTest * theta);
+        
+    % Visualizza la storia della funzione di costo
+    figure;
+    plot(1:iterations, costHistory, '-b', 'LineWidth', 2);
+    xlabel('Numero di iterazioni');
+    ylabel('Funzione di costo');
+    title('Convergenza della regressione logistica');
+    
 end
 
 function g = sigmoid(z)

@@ -1,3 +1,0 @@
-function accuracy = computeAccuracy()
-
-end

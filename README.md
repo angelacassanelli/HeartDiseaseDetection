@@ -22,9 +22,8 @@ The main objective of this project is the development of a Machine Learning mode
 
 ## TODO:
 
-- regularization
-- metrics
 - k-fold cross validation 
+- roc curve [?]
 - svm [?]
 
 ## 🚀 About Me

@@ -17,19 +17,34 @@ dataset = dataPreprocessing(dataset);
 %% PCA as Preprocessing Technique
 [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(trainingSet, testSet);
 
+%% Feature Selection
+[xTrain, yTrain] = featureSelection(trainingSet);
+[xTest, yTest] = featureSelection(testSet);
+
+[reducedXTrain, reducedYTrain] = featureSelection(reducedTrainingSet);
+[reducedXTest, reducedYTest] = featureSelection(reducedTestSet);
+
 %% Logistic Regression from scratch
-iterations = 1000;  % Numero di iterazioni
-alpha = 0.01;  % Tasso di apprendimento
-lambda = 10; 
-withRegularization = true;
-logisticRegressionFromScratch(trainingSet, iterations, alpha, lambda, withRegularization);
-logisticRegressionFromScratch(reducedTrainingSet, iterations, alpha, lambda, withRegularization);
+% iterations = 1000;  % Numero di iterazioni
+% alpha = 0.01;  % Tasso di apprendimento
+% lambda = 10; 
+% withRegularization = true;
+% predictionsWithoutPca = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
+% predictionsWithPca = logisticRegressionFromScratch(reducedXTrain, reducedXTest, reducedYTrain, iterations, alpha, lambda, withRegularization);
 
 %% Logistic Regression with built-in functions
-logisticRegressionBuiltIn(trainingSet, testSet, false);
-logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, true);
+% withoutPca = false;
+% withPca = true;
+% predictionsWithoutPca = logisticRegressionBuiltIn(trainingSet, testSet, withoutPca);
+% predictionsWithPca = logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, withPca);
 
 %% GMM Clustering for Anomaly Detection
 % gmm(dataset)
 
+%% SVM 
+predictionsWithoutPca = supportVectorMachine(xTrain, xTest, yTrain);
+predictionsWithPca = supportVectorMachine(reducedXTrain, reducedXTest, reducedYTrain);
+
 %% Results
+computeMetrics(yTest, predictionsWithoutPca)
+computeMetrics(reducedYTest, predictionsWithPca)

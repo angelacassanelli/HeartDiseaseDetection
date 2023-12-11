@@ -1,3 +1,0 @@
-function confusionMatrix = computeConfusionMatrix()
-
-end
