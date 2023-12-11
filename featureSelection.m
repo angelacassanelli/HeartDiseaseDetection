@@ -5,7 +5,7 @@ function [x, y] = featureSelection(dataset)
     targetFeature = 'HeartDisease';
     includedFeatures = setdiff(allFeatures, targetFeature); % select all features except targetFeature
     
-    x = dataset(:, includedFeatures); % predictor variables
-    y = dataset(:, targetFeature); % target variable
+    x = table2array(dataset(:, includedFeatures)); % predictor variables
+    y = table2array(dataset(:, targetFeature)); % target variable
 
 end

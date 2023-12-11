@@ -1,8 +1,4 @@
 function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
-    
-    xTrain = table2array(xTrain);
-    xTest = table2array(xTest);
-    yTrain = table2array(yTrain);
 
     % Inizializza i parametri del modello
     theta = zeros(size(xTrain, 2), 1);
@@ -62,7 +58,7 @@ function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iter
     xlabel('Numero di iterazioni');
     ylabel('Funzione di costo');
     title('Convergenza della regressione logistica');
-    
+
 end
 
 function g = sigmoid(z)

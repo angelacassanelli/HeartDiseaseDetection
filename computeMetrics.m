@@ -1,6 +1,6 @@
 function computeMetrics(yTest, predictions)
 
-    yTest = table2array(yTest);
+    % yTest = table2array(yTest);
     predictions = round(predictions);
 
     % Calcola la confusion matrix

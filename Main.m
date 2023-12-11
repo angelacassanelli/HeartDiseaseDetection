@@ -25,18 +25,18 @@ dataset = dataPreprocessing(dataset);
 [reducedXTest, reducedYTest] = featureSelection(reducedTestSet);
 
 %% Logistic Regression from scratch
-% iterations = 1000;  % Numero di iterazioni
-% alpha = 0.01;  % Tasso di apprendimento
-% lambda = 10; 
-% withRegularization = true;
-% predictionsWithoutPca = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
-% predictionsWithPca = logisticRegressionFromScratch(reducedXTrain, reducedXTest, reducedYTrain, iterations, alpha, lambda, withRegularization);
+iterations = 1000;  % Numero di iterazioni
+alpha = 0.01;  % Tasso di apprendimento
+lambda = 10; 
+withRegularization = true;
+predictionsWithoutPca = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
+predictionsWithPca = logisticRegressionFromScratch(reducedXTrain, reducedXTest, reducedYTrain, iterations, alpha, lambda, withRegularization);
 
 %% Logistic Regression with built-in functions
-% withoutPca = false;
-% withPca = true;
-% predictionsWithoutPca = logisticRegressionBuiltIn(trainingSet, testSet, withoutPca);
-% predictionsWithPca = logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, withPca);
+withoutPca = false;
+withPca = true;
+predictionsWithoutPca = logisticRegressionBuiltIn(trainingSet, testSet, withoutPca);
+predictionsWithPca = logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, withPca);
 
 %% GMM Clustering for Anomaly Detection
 % gmm(dataset)

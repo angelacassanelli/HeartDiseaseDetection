@@ -5,9 +5,6 @@ function [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(traini
     [xTrain, yTrain] = featureSelection(trainingSet);
     [xTest, yTest] = featureSelection(testSet);
 
-    xTrain = table2array(xTrain);
-    xTest = table2array(xTest);
-
     % Perform PCA
     [coeff, score, ~, ~, explained] = pca(xTrain);
     
@@ -19,8 +16,8 @@ function [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(traini
     reducedXTrain = score(:, 1:numComponents); 
     reducedXTest = (xTest - mean(xTrain)) ./ std(xTrain) * coeff(:, 1:numComponents); 
     
-    reducedTrainingSet = table2array([table(reducedXTrain), yTrain]);
-    reducedTestSet = table2array([table(reducedXTest), yTest]);
+    reducedTrainingSet = [reducedXTrain, yTrain];
+    reducedTestSet = [reducedXTest, yTest];
 
     columnNames = {'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'HeartDisease'};
     reducedTrainingSet = array2table(reducedTrainingSet, 'VariableNames', columnNames);
