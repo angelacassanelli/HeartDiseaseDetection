@@ -30,17 +30,17 @@ function crossValidation(dataset)
         % Suddividi il dataset in training e test set
         testIndices = test(cv, fold);
         trainIndices = training(cv, fold);
-        xTrain = dataset(trainIndices, :);
-        xTest = dataset(testIndices, :);
+        trainingSet = dataset(trainIndices, :);
+        testSet = dataset(testIndices, :);
     
         % Esegui la normalizzazione Z-score sulle colonne numeriche
         numericalColumns = ["Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak"];
-        xTrain{:, numericalColumns} = zscore(xTrain{:, numericalColumns});
-        xTest{:, numericalColumns} = zscore(xTest{:, numericalColumns});
+        trainingSet{:, numericalColumns} = zscore(trainingSet{:, numericalColumns});
+        testSet{:, numericalColumns} = zscore(testSet{:, numericalColumns});
     
         % Seleziona le feature
-        [xTrain, yTrain] = featureSelection(xTrain);
-        [xTest, yTest] = featureSelection(xTest);
+        [xTrain, yTrain] = featureSelection(trainingSet);
+        [xTest, yTest] = featureSelection(testSet);
     
         % PCA as Preprocessing Technique
         [xTrainReduced, xTestReduced] = pricipalComponentAnalysis(xTrain, xTest);
