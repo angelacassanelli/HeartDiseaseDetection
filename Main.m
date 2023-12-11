@@ -18,25 +18,16 @@ dataset = dataPreprocessing(dataset);
 [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(trainingSet, testSet);
 
 %% Logistic Regression from scratch
-alpha = 0.01;  % Tasso di apprendimento
 iterations = 1000;  % Numero di iterazioni
-
-[theta, costHistory] = logisticRegressionFromScratch(trainingSet, alpha, iterations);
-
-% Visualizza i parametri appresi
-disp('Parametri appresi:');
-disp(theta);
-
-% Visualizza la storia della funzione di costo
-figure;
-plot(1:iterations, costHistory, '-b', 'LineWidth', 2);
-xlabel('Numero di iterazioni');
-ylabel('Funzione di costo');
-title('Convergenza della regressione logistica');
+alpha = 0.01;  % Tasso di apprendimento
+lambda = 10; 
+withRegularization = true;
+logisticRegressionFromScratch(trainingSet, iterations, alpha, lambda, withRegularization);
+logisticRegressionFromScratch(reducedTrainingSet, iterations, alpha, lambda, withRegularization);
 
 %% Logistic Regression with built-in functions
-% logisticRegressionBuiltIn(trainingSet, testSet, false);
-% logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, true);
+logisticRegressionBuiltIn(trainingSet, testSet, false);
+logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, true);
 
 %% GMM Clustering for Anomaly Detection
 % gmm(dataset)

@@ -22,7 +22,7 @@ function [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(traini
     reducedTrainingSet = table2array([table(reducedXTrain), yTrain]);
     reducedTestSet = table2array([table(reducedXTest), yTest]);
 
-    columnNames = {'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'y'};
+    columnNames = {'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'HeartDisease'};
     reducedTrainingSet = array2table(reducedTrainingSet, 'VariableNames', columnNames);
     reducedTestSet = array2table(reducedTestSet, 'VariableNames', columnNames);
 

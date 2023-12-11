@@ -1,0 +1,3 @@
+function accuracy = computeAccuracy()
+
+end

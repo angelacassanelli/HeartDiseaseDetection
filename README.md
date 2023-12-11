@@ -10,14 +10,22 @@ The main objective of this project is the development of a Machine Learning mode
 
 ## Documentation
 
-1. Data Exploration
-2. Data Preprocessing
-3. SVM as Preprocessing Technique
-4. Logistic Regression from Scratch
-5. Logistic Regression with Built-in Functions
-6. GMM Clustering for Anomaly Detection
-7. Results
+1. Data Collection
+2. Data Exploration
+3. Data Cleaning and Preprocessing
+4. Split Dataset
+5. PCA as Preprocessing Technique
+6. Logistic Regression from Scratch
+7. Logistic Regression with Built-in Functions
+8. GMM Clustering for Anomaly Detection
+9. Results
 
+## TODO:
+
+- regularization
+- metrics
+- k-fold cross validation 
+- svm [?]
 
 ## 🚀 About Me
 I'm a MSc Computer Science Engineering Student at Polytechnic Univeristy of Bari and this is my project work for Statistical and Matematical Methods exam.
