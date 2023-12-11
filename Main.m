@@ -20,24 +20,13 @@ dataset = dataPreprocessing(dataset);
 [trainingSet, testSet] = trainTestSplit(dataset);
 
 
-% PCA as Preprocessing Technique
-[reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(trainingSet, testSet);
-
-
 % Feature Selection
 [xTrain, yTrain] = featureSelection(trainingSet);
 [xTest, yTest] = featureSelection(testSet);
 
-[reducedXTrain, reducedYTrain] = featureSelection(reducedTrainingSet);
-[reducedXTest, reducedYTest] = featureSelection(reducedTestSet);
 
-
-% Logistic Regression with built-in functions
-withoutPca = false;
-withPca = true;
-
-predictions_logisticRegressionBuiltIn_withoutPca = logisticRegressionBuiltIn(trainingSet, testSet, withoutPca);
-predictions_logisticRegressionBuiltIn_withPca = logisticRegressionBuiltIn(reducedTrainingSet, reducedTestSet, withPca);
+% PCA as Preprocessing Technique
+[xTrainReduced, xTestReduced] = pricipalComponentAnalysis(xTrain, xTest);
 
 
 % Logistic Regression from scratch
@@ -47,29 +36,19 @@ lambda = 10;
 withRegularization = true;
 
 predictions_logisticRegressionFromScratch_withoutPca = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
-predictions_logisticRegressionFromScratch_withPca = logisticRegressionFromScratch(reducedXTrain, reducedXTest, reducedYTrain, iterations, alpha, lambda, withRegularization);
-
-
-% GMM Clustering for Anomaly Detection
-% gmm(trainingSet, testSet)
-% gmm(reducedTrainingSet, reducedTestSet)
+predictions_logisticRegressionFromScratch_withPca = logisticRegressionFromScratch(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
 
 
 % SVM 
 predictions_svm_withoutPca = supportVectorMachine(xTrain, xTest, yTrain);
-predictions_svm_withPca = supportVectorMachine(reducedXTrain, reducedXTest, reducedYTrain);
+predictions_svm_withPca = supportVectorMachine(xTrainReduced, xTestReduced, yTrain);
 
 
 % Compute Metrics
 
-% Logistic Regression From Scratch 
-computeMetrics(yTest, predictions_logisticRegressionFromScratch_withoutPca)
-computeMetrics(reducedYTest, predictions_logisticRegressionFromScratch_withPca)
+[~, ~, ~, ~] = computeMetrics(yTest, predictions_logisticRegressionFromScratch_withoutPca);
+[~, ~, ~, ~] = computeMetrics(yTest, predictions_logisticRegressionFromScratch_withPca);
 
-% Logistic Regression Built in
-computeMetrics(yTest, predictions_logisticRegressionBuiltIn_withoutPca)
-computeMetrics(reducedYTest, predictions_logisticRegressionBuiltIn_withPca)
+[~, ~, ~, ~] = computeMetrics(yTest, predictions_svm_withoutPca);
+[~, ~, ~, ~] = computeMetrics(yTest, predictions_svm_withPca);
 
-% SVM
-computeMetrics(yTest, predictions_svm_withoutPca)
-computeMetrics(reducedYTest, predictions_svm_withPca)

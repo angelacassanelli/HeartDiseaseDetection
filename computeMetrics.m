@@ -1,4 +1,4 @@
-function computeMetrics(yTest, predictions)
+function [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predictions)
 
     disp('Compute metrics')
 
@@ -29,12 +29,12 @@ function computeMetrics(yTest, predictions)
     disp(['Area sotto la curva ROC (AUC):', AUC])
 
     % plot ROC curve
-    figure;
-    plot(X, Y, 'LineWidth', 2);
-    xlabel('False Positive Rate');
-    ylabel('True Positive Rate');
-    title('Curva ROC');
-    grid on;
+    % figure;
+    % plot(X, Y, 'LineWidth', 2);
+    % xlabel('False Positive Rate');
+    % ylabel('True Positive Rate');
+    % title('Curva ROC');
+    % grid on;
     
 
 end

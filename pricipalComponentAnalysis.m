@@ -1,9 +1,6 @@
-function [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(trainingSet, testSet)
+function [xTrainReduced, xTestReduced] = pricipalComponentAnalysis(xTrain, xTest, yTrain, yTest)
     
     disp('Perform PCA')
-
-    [xTrain, yTrain] = featureSelection(trainingSet);
-    [xTest, yTest] = featureSelection(testSet);
 
     % Perform PCA
     [coeff, score, ~, ~, explained] = pca(xTrain);
@@ -13,16 +10,9 @@ function [reducedTrainingSet, reducedTestSet] = pricipalComponentAnalysis(traini
     numComponents = find(cumsum(explained) >= desiredVariance, 1);
 
     % Retain only the selected number of principal components
-    reducedXTrain = score(:, 1:numComponents); 
-    reducedXTest = (xTest - mean(xTrain)) ./ std(xTrain) * coeff(:, 1:numComponents); 
+    xTrainReduced = score(:, 1:numComponents); 
+    xTestReduced = (xTest - mean(xTrain)) ./ std(xTrain) * coeff(:, 1:numComponents); 
     
-    reducedTrainingSet = [reducedXTrain, yTrain];
-    reducedTestSet = [reducedXTest, yTest];
-
-    columnNames = {'x1', 'x2', 'x3', 'x4', 'x5', 'x6', 'x7', 'x8', 'x9', 'HeartDisease'};
-    reducedTrainingSet = array2table(reducedTrainingSet, 'VariableNames', columnNames);
-    reducedTestSet = array2table(reducedTestSet, 'VariableNames', columnNames);
-
     % Visualize the explained variance
     figure;
     plot(cumsum(explained), 'bo-');
