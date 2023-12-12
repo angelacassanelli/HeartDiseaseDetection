@@ -13,4 +13,10 @@ dataset = dataExploration(dataset);
 dataset = dataPreprocessing(dataset);
 
 % Crossvalidation
-crossValidation(dataset)
+nFolds = 5;
+iterations = 1000;
+alpha = 0.01;  
+lambda = 10; 
+withRegularization = true;
+
+crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegularization)

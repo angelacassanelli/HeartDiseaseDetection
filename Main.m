@@ -26,7 +26,7 @@ dataset = dataPreprocessing(dataset);
 
 
 % PCA as Preprocessing Technique
-[xTrainReduced, xTestReduced] = pricipalComponentAnalysis(xTrain, xTest);
+[xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
 
 
 % Logistic Regression from scratch
@@ -35,8 +35,8 @@ alpha = 0.01;
 lambda = 10; 
 withRegularization = true;
 
-predictions_logisticRegressionFromScratch_withoutPca = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
-predictions_logisticRegressionFromScratch_withPca = logisticRegressionFromScratch(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
+predictions_logisticRegressionFromScratch_withoutPca = logisticRegression(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
+predictions_logisticRegressionFromScratch_withPca = logisticRegression(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
 
 
 % SVM 

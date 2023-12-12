@@ -1,43 +1,39 @@
-function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
+function predictions = logisticRegression(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
 
     disp('Perform Logistic Regression from scratch')
     
-    % Inizializza i parametri del modello
     theta = zeros(size(xTrain, 2), 1);
-
-    % Inizializza il vettore per la storia della funzione di costo
     costHistory = zeros(iterations, 1);
-
-    % Numero di esempi di addestramento
     m = height(yTrain);
 
-    % Discesa del gradiente
+    % gradient descent
+    
     for iter = 1:iterations
         
-        % Calcola la funzione di ipotesi
+        % compute predictions
         preds = sigmoid(xTrain * theta);
 
-        % Calcola l'errore
+        % compute error
         error = preds - yTrain;
 
         if withRegularization
 
-            % Aggiorna i parametri del modello utilizzando la discesa del gradiente e la regolarizzazione
+            % theta update with gradient descent and regularization
             theta(1) = theta(1) - alpha * (1/m) * (xTrain(:,1)' * error);
             theta(2:end) = theta(2:end) - alpha * (1/m) * (xTrain(:,2:end)' * error + lambda * theta(2:end));
     
-            % Calcola il termine di regolarizzazione (escludendo il termine bias)
+            % regularization term without bias
             regularizationTerm = (lambda / (2 * m)) * sum(theta(2:end).^2);
     
-            % Calcola la funzione di costo (log-costo) con regolarizzazione
+            % compute cost function with regularization
             cost = -(1/m) * sum(yTrain .* log(preds) + (1 - yTrain) .* log(1 - preds)) + regularizationTerm;
         
         else
 
-            % Aggiorna i parametri del modello utilizzando la discesa del gradiente
+            % update theta params with gradient descent
             theta = theta - alpha * (1/m) * (xTrain' * error);
     
-            % Calcola la funzione di costo (log-costo)
+            % compute cost function
             cost = -(1/m) * sum(yTrain .* log(preds) + (1 - yTrain) .* log(1 - preds));
 
         end
@@ -46,15 +42,12 @@ function predictions = logisticRegressionFromScratch(xTrain, xTest, yTrain, iter
 
     end
 
-
-    % Visualizza i parametri appresi
     disp('Parametri appresi:' );    
     disp(theta);
-
-    % Calcola le predizioni per il set di test
+    
     predictions = sigmoid(xTest * theta);
         
-    % Visualizza la storia della funzione di costo
+    % plot cost hisoty
     figure;
     plot(1:iterations, costHistory, '-b', 'LineWidth', 2);
     xlabel('Numero di iterazioni');

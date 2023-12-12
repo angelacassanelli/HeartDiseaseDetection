@@ -1,116 +1,127 @@
-function crossValidation(dataset)
+function crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegularization)
 
-    % Specifica il numero di fold per la cross-validation
-    nFold = 5;
-    cv = cvpartition(size(dataset, 1), 'KFold', nFold);
-    
-    % Inizializza il vettore per salvare le performance
-    accuracies_logisticRegressionFromScratch_withoutPca = zeros(nFold, 1);
-    precisions_logisticRegressionFromScratch_withoutPca = zeros(nFold, 1);
-    recalls_logisticRegressionFromScratch_withoutPca = zeros(nFold, 1);
-    f1Scores_logisticRegressionFromScratch_withoutPca = zeros(nFold, 1);
+    cv = cvpartition(size(dataset, 1), 'KFold', nFolds);
 
-    accuracies_logisticRegressionFromScratch_withPca = zeros(nFold, 1);
-    precisions_logisticRegressionFromScratch_withPca = zeros(nFold, 1);
-    recalls_logisticRegressionFromScratch_withPca = zeros(nFold, 1);
-    f1Scores_logisticRegressionFromScratch_withPca = zeros(nFold, 1);
+    % init metrics dictionary
+    metrics = containers.Map;
 
-    accuracies_svm_withoutPca = zeros(nFold, 1);
-    precisions_svm_withoutPca = zeros(nFold, 1);
-    recalls_svm_withoutPca = zeros(nFold, 1);
-    f1Scores_svm_withoutPca = zeros(nFold, 1);
+    % model array
+    models = {
+        'Logistic Regression Without PCA', 
+        @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization),
+        'SVM Without PCA', 
+        @(xTrain, xTest, yTrain) supportVectorMachine(xTrain, xTest, yTrain),
+        'Logistic Regression With PCA', 
+        @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization),
+        'SVM With PCA', 
+        @(xTrain, xTest, yTrain) supportVectorMachine(xTrain, xTest, yTrain),
+    };
 
-    accuracies_svm_withPca = zeros(nFold, 1);
-    precisions_svm_withPca = zeros(nFold, 1);
-    recalls_svm_withPca = zeros(nFold, 1);
-    f1Scores_svm_withPca = zeros(nFold, 1);
-    
-    for fold = 1 : nFold
-    
-        % Suddividi il dataset in training e test set
-        testIndices = test(cv, fold);
-        trainIndices = training(cv, fold);
-        trainingSet = dataset(trainIndices, :);
-        testSet = dataset(testIndices, :);
-    
-        % Esegui la normalizzazione Z-score sulle colonne numeriche
-        numericalColumns = ["Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak"];
-        trainingSet{:, numericalColumns} = zscore(trainingSet{:, numericalColumns});
-        testSet{:, numericalColumns} = zscore(testSet{:, numericalColumns});
-    
-        % Seleziona le feature
-        [xTrain, yTrain] = featureSelection(trainingSet);
-        [xTest, yTest] = featureSelection(testSet);
-    
-        % PCA as Preprocessing Technique
-        [xTrainReduced, xTestReduced] = pricipalComponentAnalysis(xTrain, xTest);
-                
-        % Logistic Regression from scratch
-        iterations = 1000;
-        alpha = 0.01;  
-        lambda = 10; 
-        withRegularization = true;
+    for modelId = 1 : 2: length(models)
+        modelName = models{modelId};
+        modelFunction = models{modelId + 1};
+
+        % metrics vector
+        accuracies = zeros(nFolds, 1);
+        precisions = zeros(nFolds, 1);
+        recalls = zeros(nFolds, 1);
+        f1Scores = zeros(nFolds, 1);
+
+        for fold = 1:nFolds
+
+            % train test split
+            testIndices = test(cv, fold);
+            trainIndices = training(cv, fold);
+            trainingSet = dataset(trainIndices, :);
+            testSet = dataset(testIndices, :);
         
-        predictions_logisticRegressionFromScratch_withoutPca = logisticRegressionFromScratch(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
-        predictions_logisticRegressionFromScratch_withPca = logisticRegressionFromScratch(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
+            % z-score normalization of numerical features
+            numericalColumns = ["Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak"];
+            trainingSet{:, numericalColumns} = zscore(trainingSet{:, numericalColumns});
+            testSet{:, numericalColumns} = zscore(testSet{:, numericalColumns});
     
-        % SVM 
-        predictions_svm_withoutPca = supportVectorMachine(xTrain, xTest, yTrain);
-        predictions_svm_withPca = supportVectorMachine(xTrainReduced, xTestReduced, yTrain);
+            % feature selection
+            [xTrain, yTrain] = featureSelection(trainingSet);
+            [xTest, yTest] = featureSelection(testSet);
+                
+            % train and predict
+            switch modelName 
+                case 'Logistic Regression Without PCA'
+                    predictions = modelFunction(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
+                case 'SVM Without PCA'
+                    predictions = modelFunction(xTrain, xTest, yTrain);
+                case 'Logistic Regression With PCA'
+                    % PCA as Preprocessing Technique
+                    [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
+                    predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
+                case 'SVM With PCA'
+                    % PCA as Preprocessing Technique
+                    [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
+                    predictions = modelFunction(xTrainReduced, xTestReduced, yTrain);
+            end
 
-        % Compute Metrics
-        [accuracy_logisticRegressionFromScratch_withoutPca, precision_logisticRegressionFromScratch_withoutPca, recall_logisticRegressionFromScratch_withoutPca, f1Score_logisticRegressionFromScratch_withoutPca] = computeMetrics(yTest, predictions_logisticRegressionFromScratch_withoutPca);
-        [accuracy_logisticRegressionFromScratch_withPca, precision_logisticRegressionFromScratch_withPca, recall_logisticRegressionFromScratch_withPca, f1Score_logisticRegressionFromScratch_withPca] = computeMetrics(yTest, predictions_logisticRegressionFromScratch_withPca);
+            % compute metrics
+            [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predictions);
+
+            % populate metrics array
+            accuracies(fold) = accuracy;
+            precisions(fold) = precision;
+            recalls(fold) = recall;
+            f1Scores(fold) = f1Score;
+
+        end     
+
+        % populate metrics dictionary
+        metrics(modelName) = struct('accuracies', accuracies, 'precisions', precisions, 'recalls', recalls, 'f1Scores', f1Scores);
     
-        [accuracy_svm_withoutPca, precision_svm_withoutPca, recall_svm_withoutPca, f1Score_svm_withoutPca] = computeMetrics(yTest, predictions_svm_withoutPca);
-        [accuracy_svm_withPca, precision_svm_withPca, recall_svm_withPca, f1Score_svm_withPca] = computeMetrics(yTest, predictions_svm_withPca);
+    end
 
-        % Salva l'accuratezza per questo fold
-        accuracies_logisticRegressionFromScratch_withoutPca(fold) = accuracy_logisticRegressionFromScratch_withoutPca;
-        precisions_logisticRegressionFromScratch_withoutPca(fold) = precision_logisticRegressionFromScratch_withoutPca;
-        recalls_logisticRegressionFromScratch_withoutPca(fold) = recall_logisticRegressionFromScratch_withoutPca;
-        f1Scores_logisticRegressionFromScratch_withoutPca(fold) = f1Score_logisticRegressionFromScratch_withoutPca;
+    % show metrics for each model
+    for modelId = 1 : 2 : length(models)
+        modelName = models{modelId};
+        disp(['Risultati per ', modelName, ':']);
 
-        accuracies_logisticRegressionFromScratch_withPca(fold) = accuracy_logisticRegressionFromScratch_withPca;
-        precisions_logisticRegressionFromScratch_withPca(fold) = precision_logisticRegressionFromScratch_withPca;
-        recalls_logisticRegressionFromScratch_withPca(fold) = recall_logisticRegressionFromScratch_withPca;
-        f1Scores_logisticRegressionFromScratch_withPca(fold) = f1Score_logisticRegressionFromScratch_withPca;
+        accuracySum = 0;
+        precisionSum = 0;
+        recallSum = 0;
+        f1ScoreSum = 0;
 
-        accuracies_svm_withoutPca(fold) = accuracy_svm_withoutPca;
-        precisions_svm_withoutPca(fold) = precision_svm_withoutPca;
-        recalls_svm_withoutPca(fold) = recall_svm_withoutPca;
-        f1Scores_svm_withoutPca(fold) = f1Score_svm_withoutPca;
+        for fold = 1:nFolds
+            accuracy = metrics(modelName).accuracies(fold);
+            disp(['Accuracy for Fold ', num2str(fold), ': ', num2str(accuracy)]);
+            accuracySum = accuracySum + accuracy;
+        end
+        
+        accuracyMean = accuracySum / nFolds;
+        disp(['Media delle Accuracies: ', num2str(accuracyMean)]);
 
-        accuracies_svm_withPca(fold) = accuracy_svm_withPca;
-        precisions_svm_withPca(fold) = precision_svm_withPca;
-        recalls_svm_withPca(fold) = recall_svm_withPca;
-        f1Scores_svm_withPca(fold) = f1Score_svm_withPca;
+        for fold = 1:nFolds
+            precision = metrics(modelName).precisions(fold);
+            disp(['Precision for Fold ', num2str(fold), ': ', num2str(precision)]);
+            precisionSum = precisionSum + precision;
+        end
+
+        precisionMean = precisionSum / nFolds;
+        disp(['Media delle Accuracies: ', num2str(precisionMean)]);
+
+        for fold = 1:nFolds
+            recall = metrics(modelName).recalls(fold);
+            disp(['Recall for Fold ', num2str(fold), ': ', num2str(recall)]);
+            recallSum = recallSum + recall;
+        end
+                
+        recallMean = recallSum / nFolds;
+        disp(['Media delle Accuracies: ', num2str(recallMean)]);
+        
+        for fold = 1:nFolds
+            f1Score = metrics(modelName).f1Scores(fold);
+            disp(['F1-Score for Fold ', num2str(fold), ': ', num2str(f1Score)]);
+            f1ScoreSum = f1ScoreSum + f1Score;
+        end
+
+        f1ScoreMean = f1ScoreSum / nFolds;
+        disp(['Media delle Accuracies: ', num2str(f1ScoreMean)]);
 
     end
-    
-    % Calcola l'accuratezza media su tutti i fold
-    disp('Logistic Regression From Scratch Without PCA')
-    disp(['Mean Accuracy: ', num2str(mean(accuracies_logisticRegressionFromScratch_withoutPca))]);
-    disp(['Mean Precision: ', num2str(mean(precisions_logisticRegressionFromScratch_withoutPca))]);
-    disp(['Mean Recall: ', num2str(mean(recalls_logisticRegressionFromScratch_withoutPca))]);
-    disp(['Mean F1Score: ', num2str(mean(f1Scores_logisticRegressionFromScratch_withoutPca))]);
-
-    disp('Logistic Regression From Scratch With PCA')
-    disp(['Mean Accuracy: ', num2str(mean(accuracies_logisticRegressionFromScratch_withPca))]);
-    disp(['Mean Precision: ', num2str(mean(precisions_logisticRegressionFromScratch_withPca))]);
-    disp(['Mean Recall: ', num2str(mean(recalls_logisticRegressionFromScratch_withPca))]);
-    disp(['Mean F1Score: ', num2str(mean(f1Scores_logisticRegressionFromScratch_withPca))]);
-
-    disp('SVM Without PCA')
-    disp(['Mean Accuracy: ', num2str(mean(accuracies_svm_withoutPca))]);
-    disp(['Mean Precision: ', num2str(mean(precisions_svm_withoutPca))]);
-    disp(['Mean Recall: ', num2str(mean(recalls_svm_withoutPca))]);
-    disp(['Mean F1Score: ', num2str(mean(f1Scores_svm_withoutPca))]);
-
-    disp('SVM With PCA')
-    disp(['Mean Accuracy: ', num2str(mean(accuracies_svm_withPca))]);
-    disp(['Mean Precision: ', num2str(mean(precisions_svm_withPca))]);
-    disp(['Mean Recall: ', num2str(mean(recalls_svm_withPca))]);
-    disp(['Mean F1Score: ', num2str(mean(f1Scores_svm_withPca))]);
 
 end

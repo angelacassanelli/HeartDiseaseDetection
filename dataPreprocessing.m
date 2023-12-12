@@ -34,24 +34,22 @@ function dataset = dataPreprocessing(dataset)
     for i = 1 : size(numericalFeatures)
         currentFeature = numericalFeatures(i); 
 
-        % Calcola l'Interquartile Range (IQR) per la colonna corrente
+        % compute iqr for current column
         q75 = prctile(dataset.(currentFeature), 75, 'all');
         q25 = prctile(dataset.(currentFeature), 25, 'all');
         iqrValues = q75 - q25;
 
-        % Specifica la soglia IQR oltre la quale considerare un valore come outlier
-        sogliaIQR = 3; % Puoi regolare questo valore in base alle tue esigenze
+        % values greater than thresold are outliers
+        threshold = 3; 
 
-        % Trova gli indici degli outliers
-        outliersIndices = abs(dataset.(currentFeature) - median(dataset.(currentFeature))) > sogliaIQR * iqrValues;
+        % indexes of outliers
+        outliersIndices = abs(dataset.(currentFeature) - median(dataset.(currentFeature))) > threshold * iqrValues;
 
-        % Rimuovi gli outliers impostando i valori corrispondenti a NaN nella colonna corrente
+        % outlier removal
         dataset.(currentFeature)(outliersIndices) = NaN;
         dataset = rmmissing(dataset);
+        
     end
-
-    % normalisation
-    % dataset{:, numericalFeatures} = zscore(dataset{:, numericalFeatures});
 
     head(dataset);
     summary(dataset);

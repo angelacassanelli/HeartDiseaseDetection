@@ -1,5 +1,7 @@
 function [trainingSet, testSet] = trainTestSplit(dataset)
 
+    % hold out technique
+
     disp('Perform train-test split')
 
     numericalFeatures = ["Age"; "RestingBP"; "Cholesterol"; "MaxHR"; "Oldpeak"];
