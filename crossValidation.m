@@ -1,4 +1,4 @@
-function crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegularization)
+function crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegularization, kernel)
 
     cv = cvpartition(size(dataset, 1), 'KFold', nFolds);
 
@@ -10,11 +10,11 @@ function crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegular
         'Logistic Regression Without PCA', 
         @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization),
         'SVM Without PCA', 
-        @(xTrain, xTest, yTrain) supportVectorMachine(xTrain, xTest, yTrain),
+        @(xTrain, xTest, yTrain, kernel) supportVectorMachine(xTrain, xTest, yTrain, kernel),
         'Logistic Regression With PCA', 
         @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization),
         'SVM With PCA', 
-        @(xTrain, xTest, yTrain) supportVectorMachine(xTrain, xTest, yTrain),
+        @(xTrain, xTest, yTrain, kernel) supportVectorMachine(xTrain, xTest, yTrain, kernel)
     };
 
     for modelId = 1 : 2: length(models)
@@ -43,21 +43,22 @@ function crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegular
             % feature selection
             [xTrain, yTrain] = featureSelection(trainingSet);
             [xTest, yTest] = featureSelection(testSet);
-                
+                                       
+            % PCA as Preprocessing Technique
+            if contains(modelName, 'With PCA') 
+                [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
+            end            
+    
             % train and predict
             switch modelName 
                 case 'Logistic Regression Without PCA'
                     predictions = modelFunction(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
                 case 'SVM Without PCA'
-                    predictions = modelFunction(xTrain, xTest, yTrain);
+                    predictions = modelFunction(xTrain, xTest, yTrain, kernel);
                 case 'Logistic Regression With PCA'
-                    % PCA as Preprocessing Technique
-                    [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
                     predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
                 case 'SVM With PCA'
-                    % PCA as Preprocessing Technique
-                    [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
-                    predictions = modelFunction(xTrainReduced, xTestReduced, yTrain);
+                    predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, kernel);
             end
 
             % compute metrics

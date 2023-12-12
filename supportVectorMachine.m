@@ -1,9 +1,9 @@
-function predictions = supportVectorMachine(xTrain, xTest, yTrain)
+function predictions = supportVectorMachine(xTrain, xTest, yTrain, kernel)
 
     disp('Perform SVM classification')
 
     % train svm
-    svmModel = fitcsvm(xTrain, yTrain, 'KernelFunction', 'linear');
+    svmModel = fitcsvm(xTrain, yTrain, 'KernelFunction', kernel);
     disp(svmModel);
     
     % predict with svm
