@@ -12,19 +12,12 @@ dataset = dataExploration(dataset);
 % Data Cleaning and Preprocessing
 dataset = dataPreprocessing(dataset);
 
-%% Cross Validation
+
+%% Cross Validation for Logistic Regression Models
 
 nFolds = 5;
-
 iterations = 100;
 withRegularization = true;
-
-alpha = 0.01;  
-lambda = 10; 
-kernel = 'linear';
-
-
-%% Logistic Regression Models
 
 [bestHyperparams, bestMetrics] = gridSearchLR(dataset, nFolds, iterations, withRegularization);
 
@@ -56,7 +49,9 @@ end
 
 
 
-%% SVM Models
+%% Cross Validation for SVM Models
+
+nFolds = 5;
 
 [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds);
 
