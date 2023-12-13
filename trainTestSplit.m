@@ -1,10 +1,6 @@
 function [trainingSet, testSet] = trainTestSplit(dataset)
 
-    % hold out technique
-
-    disp('Perform train-test split')
-
-    numericalFeatures = ["Age"; "RestingBP"; "Cholesterol"; "MaxHR"; "Oldpeak"];
+    % hold out train-test split
 
     % split dataset in training and test set
     cv = cvpartition(size(dataset, 1), 'HoldOut', 0.2);
@@ -12,8 +8,8 @@ function [trainingSet, testSet] = trainTestSplit(dataset)
     testSet = dataset(test(cv), :);
 
     % z-score normalisation
-    trainingSet{:, numericalFeatures} = zscore(trainingSet{:, numericalFeatures});
-    testSet{:, numericalFeatures} = zscore(testSet{:, numericalFeatures});
+    trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
+    testSet{:, Utils.numericalFeatures} = zscore(testSet{:, Utils.numericalFeatures});
 
 end 
 

@@ -1,4 +1,4 @@
-%% MAIN 
+%% Data Preparation 
 
 clear; clc; close all;
 rng(42); % per la riproducibilità
@@ -12,29 +12,27 @@ dataset = dataExploration(dataset);
 % Data Cleaning and Preprocessing
 dataset = dataPreprocessing(dataset);
 
-% Crossvalidation
+%% Cross Validation
+
 nFolds = 5;
+
 iterations = 100;
+withRegularization = true;
+
 alpha = 0.01;  
 lambda = 10; 
-withRegularization = true;
 kernel = 'linear';
-% crossValidation(dataset, nFolds, iterations, alpha, lambda, withRegularization, kernel)
-% [bestHyperparams, bestMetrics] = gridSearch(dataset, nFolds, iterations, withRegularization);
 
-disp("***********************")
-disp("***********************")
+
+%% Logistic Regression Models
 
 [bestHyperparams, bestMetrics] = gridSearchLR(dataset, nFolds, iterations, withRegularization);
 
-disp("***********************")
-disp("***********************")
 
+% show results
+disp('Best performances for Logistic Regression :');
+disp('---------------------------');
 
-% Visualizza i risultati finali
-disp('Migliori iperparametri e metriche per ogni modello:');
-
-% Visualizza i migliori iperparametri
 disp('Migliori iperparametri:');
 keysHyperparams = keys(bestHyperparams);
 for i = 1:length(keysHyperparams)
@@ -47,7 +45,6 @@ for i = 1:length(keysHyperparams)
     disp('---------------------------');
 end
 
-% Visualizza le migliori metriche
 disp('Migliori metriche:');
 keysMetrics = keys(bestMetrics);
 for i = 1:length(keysMetrics)
@@ -62,16 +59,13 @@ end
 
 
 
-disp("***********************")
-disp("***********************")
+%% SVM Models
 
 [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds);
 
-disp("***********************")
-disp("***********************")
-
 % Visualizza i risultati finali
-disp('Migliori iperparametri e metriche per ogni modello:');
+disp('Best performances for Support Vector Machine :');
+disp('---------------------------');
 
 % Visualizza i migliori iperparametri
 disp('Migliori iperparametri:');

@@ -3,17 +3,20 @@ function [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predicti
     disp('Compute metrics')
 
     % compute confusion matrix
-    confusionMatrix = confusionmat(yTest, round(predictions));
+    confusionMatrix = computeConfusionMatrix(yTest, predictions);
 
     % compute metrics (accuracy, precision, recall, f1-score)
-    accuracy = (confusionMatrix(1, 1) + confusionMatrix(2, 2)) / sum(confusionMatrix(:));
-    precision = confusionMatrix(1, 1) / (confusionMatrix(1, 1) + confusionMatrix(2, 1));
-    recall = confusionMatrix(1, 1) / (confusionMatrix(1, 1) + confusionMatrix(1, 2));
-    f1Score = 2 * (precision * recall) / (precision + recall);
-
+    accuracy = computeAccuracy(confusionMatrix);
     disp(['Accuracy: ', num2str(accuracy)]);
+
+    precision = computePrecision(confusionMatrix);
     disp(['Precision: ', num2str(precision)]);
+
+    recall = computeRecall(confusionMatrix);
     disp(['Recall: ', num2str(recall)]);
+
+    f1Score = computeF1Score(precision, recall);
     disp(['F1-Score: ', num2str(f1Score)]);
 
 end
+

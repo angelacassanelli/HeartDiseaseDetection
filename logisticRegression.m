@@ -1,13 +1,12 @@
 function predictions = logisticRegression(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
 
-    disp('Perform Logistic Regression from scratch')
+    % Perform Logistic Regression from scratch
     
     theta = zeros(size(xTrain, 2), 1);
     costHistory = zeros(iterations, 1);
     m = height(yTrain);
 
     % gradient descent
-    
     for iter = 1:iterations
         
         % compute predictions
@@ -41,19 +40,9 @@ function predictions = logisticRegression(xTrain, xTest, yTrain, iterations, alp
         costHistory(iter) = cost;
 
     end
-
-    disp('Parametri appresi:' );    
-    disp(theta);
     
     predictions = sigmoid(xTest * theta);
         
-    % plot cost hisoty
-    figure;
-    plot(1:iterations, costHistory, '-b', 'LineWidth', 2);
-    xlabel('Numero di iterazioni');
-    ylabel('Funzione di costo');
-    title('Convergenza della regressione logistica');
-
 end
 
 function g = sigmoid(z)

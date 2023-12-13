@@ -1,16 +1,14 @@
-function area = computeROCCurve(yTest, predictions)
-
-    disp('Compute ROC curve')
-
-    % param 1 indicates the positive class
+function auc = computeROCCurve(yTest, predictions)
+    % compute ROC curve
     % fpr: False Positive Rate, FPR
     % tpr: True Positive Rate, TPR
     % t: Threshold values corresponding to points on the ROC curve
-    % area: Area under the ROC curve
+    % auc: Area under the ROC curve
+    % param '1' of 'perfcurve' indicates the positive class
+
+    [fpr, tpr, ~, auc] = perfcurve(yTest, predictions, 1);    
     
-    [fpr, tpr, ~, area] = perfcurve(yTest, predictions, 1);    
-    
-    disp(['Area sotto la curva ROC (AUC):', area])
+    disp(['Area sotto la curva ROC (AUC):', auc])
 
     plot ROC curve
     figure;

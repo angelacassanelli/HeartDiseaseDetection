@@ -23,7 +23,6 @@ The main objective of this project is the development of a Machine Learning mode
 
 ## TODO:
 
-- grid search
 - validation
 
 

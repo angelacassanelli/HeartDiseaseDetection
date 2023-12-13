@@ -4,9 +4,9 @@ function [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds)
 
     % model array
     models = {
-        'SVM Without PCA', 
-        @(xTrain, xTest, yTrain, kernel) supportVectorMachine(xTrain, xTest, yTrain, kernel),
-        'SVM With PCA', 
+        'SVM Without PCA', ...
+        @(xTrain, xTest, yTrain, kernel) supportVectorMachine(xTrain, xTest, yTrain, kernel), ...
+        'SVM With PCA', ...
         @(xTrain, xTest, yTrain, kernel) supportVectorMachine(xTrain, xTest, yTrain, kernel)
     };
 
@@ -33,10 +33,6 @@ function [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds)
 
             % Inizializza i vettori per ogni metrica
             accuracies = zeros(nFolds, 1);
-            precisions = zeros(nFolds, 1);
-            recalls = zeros(nFolds, 1);
-            f1Scores = zeros(nFolds, 1);
-
 
             % Ciclo sulla k-fold cross-validation
             for fold = 1:nFolds
@@ -48,9 +44,8 @@ function [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds)
                 testSet = dataset(testIndices, :);
             
                 % z-score normalization of numerical features
-                numericalColumns = ["Age", "RestingBP", "Cholesterol", "MaxHR", "Oldpeak"];
-                trainingSet{:, numericalColumns} = zscore(trainingSet{:, numericalColumns});
-                testSet{:, numericalColumns} = zscore(testSet{:, numericalColumns});
+                trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
+                testSet{:, Utils.numericalFeatures} = zscore(testSet{:, Utils.numericalFeatures});
         
                 % feature selection
                 [xTrain, yTrain] = featureSelection(trainingSet);
@@ -66,21 +61,16 @@ function [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds)
                 end
     
                 % compute metrics
-                [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predictions);
+                confusionMatrix = computeConfusionMatrix(yTest, predictions);
+                accuracy = computeAccuracy(confusionMatrix);
     
                 % populate metrics array
                 accuracies(fold) = accuracy;
-                precisions(fold) = precision;
-                recalls(fold) = recall;
-                f1Scores(fold) = f1Score;
 
             end
 
             % Calcola le medie delle metriche su tutti i fold
             meanAccuracy = mean(accuracies);
-            meanPrecision = mean(precisions);
-            meanRecall = mean(recalls);
-            meanF1Score = mean(f1Scores);
 
             % Salvare i risultati se sono migliori dei precedenti
             if isempty(bestMetricsPerModel) || meanAccuracy > bestMetricsPerModel('Accuracy')
@@ -94,8 +84,3 @@ function [bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds)
         bestHyperparams(modelName) = bestHyperparamsPerModel;
 
     end
-    
-    % Visualizza i risultati finali
-    disp('Migliori iperparametri e metriche per ogni modello:');
-    disp(bestHyperparams);
-    disp(bestMetrics);
