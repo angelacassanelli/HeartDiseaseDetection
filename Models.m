@@ -1,7 +1,7 @@
 classdef Models
     methods (Static)
 
-        function predictions = logisticRegression(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization)
+        function predictions = logisticRegression(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization)
         
             % Perform Logistic Regression from scratch
             
@@ -44,14 +44,14 @@ classdef Models
         
             end
             
-            predictions = sigmoid(xTest * theta);
+            predictions = sigmoid(xVal * theta);
                 
         end
 
-        function predictions = supportVectorMachine(xTrain, xTest, yTrain, kernel)        
+        function predictions = supportVectorMachine(xTrain, xVal, yTrain, kernel)        
             % perform SVM classification
             svmModel = fitcsvm(xTrain, yTrain, 'KernelFunction', kernel);
-            predictions = predict(svmModel, xTest);
+            predictions = predict(svmModel, xVal);
             % disp(svmModel);        
         end        
 

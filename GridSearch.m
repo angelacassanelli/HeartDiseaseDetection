@@ -8,9 +8,9 @@ classdef GridSearch
             % model array
             models = {
                 'Logistic Regression Without PCA', ...
-                @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization), ...
+                @(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xVal, yTrain,  iterations, alpha, lambda, withRegularization), ...
                 'Logistic Regression With PCA', ...
-                @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization)
+                @(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xVal, yTrain,  iterations, alpha, lambda, withRegularization)
             };
         
             % params grids
@@ -40,31 +40,31 @@ classdef GridSearch
                             % Ciclo sulla k-fold cross-validation
                             for fold = 1:nFolds
                                 
-                                % train test split
-                                testIndices = test(cv, fold);
+                                % train-val split
+                                valIndices = test(cv, fold);
                                 trainIndices = training(cv, fold);
                                 trainingSet = dataset(trainIndices, :);
-                                testSet = dataset(testIndices, :);
+                                valSet = dataset(valIndices, :);
                             
                                 % z-score normalization of numerical features
                                 trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
-                                testSet{:, Utils.numericalFeatures} = zscore(testSet{:, Utils.numericalFeatures});
+                                valSet{:, Utils.numericalFeatures} = zscore(valSet{:, Utils.numericalFeatures});
                         
                                 % feature selection
                                 [xTrain, yTrain] = featureSelection(trainingSet);
-                                [xTest, yTest] = featureSelection(testSet);
+                                [xVal, yVal] = featureSelection(valSet);
                                     
                                 % train and predict
                                 switch modelName 
                                     case 'Logistic Regression Without PCA'
-                                        predictions = modelFunction(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization);
+                                        predictions = modelFunction(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization);
                                     case 'Logistic Regression With PCA'
-                                        [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
-                                        predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, iterations, alpha, lambda, withRegularization);
+                                        [xTrainReduced, xValReduced] = principalComponentAnalysis(xTrain, xVal);
+                                        predictions = modelFunction(xTrainReduced, xValReduced, yTrain, iterations, alpha, lambda, withRegularization);
                                 end
                     
                                 % compute metrics
-                                confusionMatrix = Metrics.computeConfusionMatrix(yTest, predictions);
+                                confusionMatrix = Metrics.computeConfusionMatrix(yVal, predictions);
                                 accuracy = Metrics.computeAccuracy(confusionMatrix);            
         
                                 % populate metrics array
@@ -100,9 +100,9 @@ classdef GridSearch
             % model array
             models = {
                 'SVM Without PCA', ...
-                @(xTrain, xTest, yTrain, kernel) Models.supportVectorMachine(xTrain, xTest, yTrain, kernel), ...
+                @(xTrain, xVal, yTrain, kernel) Models.supportVectorMachine(xTrain, xVal, yTrain, kernel), ...
                 'SVM With PCA', ...
-                @(xTrain, xTest, yTrain, kernel) Models.supportVectorMachine(xTrain, xTest, yTrain, kernel)
+                @(xTrain, xVal, yTrain, kernel) Models.supportVectorMachine(xTrain, xVal, yTrain, kernel)
             };
         
             % params grids
@@ -132,31 +132,31 @@ classdef GridSearch
                     % Ciclo sulla k-fold cross-validation
                     for fold = 1:nFolds
                         
-                        % train test split
-                        testIndices = test(cv, fold);
+                        % train-val split
+                        valIndices = test(cv, fold);
                         trainIndices = training(cv, fold);
                         trainingSet = dataset(trainIndices, :);
-                        testSet = dataset(testIndices, :);
+                        valSet = dataset(valIndices, :);
                     
                         % z-score normalization of numerical features
                         trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
-                        testSet{:, Utils.numericalFeatures} = zscore(testSet{:, Utils.numericalFeatures});
+                        valSet{:, Utils.numericalFeatures} = zscore(valSet{:, Utils.numericalFeatures});
                 
                         % feature selection
                         [xTrain, yTrain] = featureSelection(trainingSet);
-                        [xTest, yTest] = featureSelection(testSet);
+                        [xVal, yVal] = featureSelection(valSet);
                             
                         % train and predict
                         switch modelName 
                             case 'SVM Without PCA'
-                                predictions = modelFunction(xTrain, xTest, yTrain, kernel);
+                                predictions = modelFunction(xTrain, xVal, yTrain, kernel);
                             case 'SVM With PCA'
-                                [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
-                                predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, kernel);
+                                [xTrainReduced, xValReduced] = principalComponentAnalysis(xTrain, xVal);
+                                predictions = modelFunction(xTrainReduced, xValReduced, yTrain, kernel);
                         end
             
                         % compute metrics
-                        confusionMatrix = Metrics.computeConfusionMatrix(yTest, predictions);
+                        confusionMatrix = Metrics.computeConfusionMatrix(yVal, predictions);
                         accuracy = Metrics.computeAccuracy(confusionMatrix);
             
                         % populate metrics array
