@@ -53,16 +53,10 @@ classdef Metrics
             % param '1' of 'perfcurve' indicates the positive class
         
             [fpr, tpr, ~, auc] = perfcurve(yTest, predictions, 1);    
-            
             disp(['Area sotto la curva ROC (AUC):', num2str(auc)])
         
             % plot ROC curve
-            figure;
-            plot(fpr, tpr, 'LineWidth', 2);
-            xlabel('False Positive Rate');
-            ylabel('True Positive Rate');
-            title('Curva ROC');
-            grid on;            
+            Plots.plotROCCurve(fpr, tpr)      
         end
         
     end

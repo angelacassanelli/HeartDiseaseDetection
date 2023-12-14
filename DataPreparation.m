@@ -73,5 +73,54 @@ classdef DataPreparation
             Plots.plotDataDistributions(dataset, "Data Preprocessing")        
         end
 
+        function [trainingSet, testSet] = trainTestSplit(dataset)
+            % hold out train-test split
+        
+            % split dataset in training and test set
+            cv = cvpartition(size(dataset, 1), 'HoldOut', 0.2);
+            trainingSet = dataset(training(cv), :);
+            testSet = dataset(test(cv), :);
+        
+            % z-score normalisation
+            trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
+            testSet{:, Utils.numericalFeatures} = zscore(testSet{:, Utils.numericalFeatures});
+        
+        end 
+
+        function [x, y] = featureSelection(dataset)
+            % feature selection
+            
+            allFeatures = dataset.Properties.VariableNames;
+            
+            % select all features except targetFeature
+            includedFeatures = setdiff(allFeatures, Utils.targetFeature); 
+            
+            % predictor variables
+            x = table2array(dataset(:, includedFeatures));
+            
+            % target variable
+            y = table2array(dataset(:, Utils.targetFeature)); 
+        
+        end
+
+        function [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest)
+            % PCA
+            [coeff, score, ~, ~, explained] = pca(xTrain);
+            
+            % choose the number of principal components that retains 95% of variance
+            desiredVariance = 95; 
+            numComponents = find(cumsum(explained) >= desiredVariance, 1);
+        
+            % retain only the selected number of principal components
+            xTrainReduced = score(:, 1:numComponents); 
+            xTestReduced = (xTest - mean(xTrain)) ./ std(xTrain) * coeff(:, 1:numComponents); 
+            
+            % visualize the explained variance
+            % plotExplainedVariance(explained)
+            
+            % disp(['Selected ', num2str(numComponents), ' principal components.']);
+        
+        end
+        
     end
 end

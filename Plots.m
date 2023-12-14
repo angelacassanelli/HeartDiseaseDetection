@@ -19,6 +19,7 @@ classdef Plots
         end
 
         function plotExplainedVariance(explained)
+            % plot explained variance
             figure;
             plot(cumsum(explained), 'bo-');
             xlabel('Number of Principal Components');
@@ -34,6 +35,16 @@ classdef Plots
             xlabel('Numero di iterazioni');
             ylabel('Funzione di costo');
             title('Convergenza della regressione logistica');        
+        end
+
+        function plotROCCurve(fpr, tpr)
+            % plot ROC Curve
+            figure;
+            plot(fpr, tpr, 'LineWidth', 2);
+            xlabel('False Positive Rate');
+            ylabel('True Positive Rate');
+            title('Curva ROC');
+            grid on;    
         end
 
     end

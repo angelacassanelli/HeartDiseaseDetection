@@ -3,7 +3,7 @@ classdef Models
 
         function predictions = logisticRegression(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization)
         
-            % Perform Logistic Regression from scratch
+            % Logistic Regression from scratch
             
             theta = zeros(size(xTrain, 2), 1);
             costHistory = zeros(iterations, 1);

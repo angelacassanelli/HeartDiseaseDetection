@@ -1,7 +1,9 @@
 %% Data Preparation 
 
 clear; clc; close all;
-rng(42); % per la riproducibilità
+
+% Seed for Reproducibility
+rng(42); 
 
 % Data Collection
 dataset = readtable('dataset/HeartDisease.csv');
@@ -13,7 +15,7 @@ dataset = DataPreparation.dataExploration(dataset);
 dataset = DataPreparation.dataPreprocessing(dataset);
 
 % Train-Test split
-[trainingSet, testSet] = trainTestSplit(dataset);
+[trainingSet, testSet] = DataPreparation.trainTestSplit(dataset);
 
 
 %% Cross Validation for Logistic Regression Models
@@ -22,9 +24,10 @@ nFolds = 5;
 iterations = 100;
 withRegularization = true;
 
+% Cross Validation with Grid Search for Logistic Regression models
 [bestHyperparamsLR, bestMetricsLR] = GridSearch.gridSearchLR(trainingSet, nFolds, iterations, withRegularization);
 
-% show results
+% Show Results
 fprintf('\nBEST PERFORMANCE FOR LOGISTIC REGRESSION:\n\n');
 
 fprintf('\nBest hyperparams:\n\n');
@@ -55,9 +58,10 @@ end
 
 nFolds = 5;
 
+% Cross Validation with Grid Search for SVM models
 [bestHyperparamsSVM, bestMetricsSVM] = GridSearch.gridSearchSVM(trainingSet, nFolds);
 
-% show results
+% Show Results
 fprintf('\nBEST PERFORMANCES FOR SUPPORT VECTOR MACHINE:\n\n');
 
 fprintf('\nBest hyperparams:\n\n');
@@ -84,22 +88,21 @@ end
 
 %% Final Evaluation
 
-[xTrain, yTrain] = featureSelection(trainingSet);
-[xTest, yTest] = featureSelection(testSet);
+[xTrain, yTrain] = DataPreparation.featureSelection(trainingSet);
+[xTest, yTest] = DataPreparation.featureSelection(testSet);
 
-% model array
 models = {
     'Logistic Regression Without PCA', ...
-    @(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xVal, yTrain,  iterations, alpha, lambda, withRegularization), ...
+    @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization), ...
     'Logistic Regression With PCA', ...
-    @(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xVal, yTrain,  iterations, alpha, lambda, withRegularization), ...
+    @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization), ...
     'SVM Without PCA', ...
-    @(xTrain, xVal, yTrain, kernel) Models.supportVectorMachine(xTrain, xVal, yTrain, kernel), ...
+    @(xTrain, xTest, yTrain, kernel) Models.supportVectorMachine(xTrain, xTest, yTrain, kernel), ...
     'SVM With PCA', ...
-    @(xTrain, xVal, yTrain, kernel) Models.supportVectorMachine(xTrain, xVal, yTrain, kernel)
+    @(xTrain, xTest, yTrain, kernel) Models.supportVectorMachine(xTrain, xTest, yTrain, kernel)
 };
 
-
+% Final Evaluation of all Models
 for modelId = 1:2:length(models)
     modelName = models{modelId};
     modelFunction = models{modelId + 1};
@@ -112,14 +115,14 @@ for modelId = 1:2:length(models)
             predictions = modelFunction(xTrain, xTest, yTrain, iterations, hyperparams('Alpha'), hyperparams('Lambda'), withRegularization);
         case 'Logistic Regression With PCA'
             hyperparams = bestHyperparamsLR(modelName);
-            [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
+            [xTrainReduced, xTestReduced] = DataPreparation.principalComponentAnalysis(xTrain, xTest);
             predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, iterations, hyperparams('Alpha'), hyperparams('Lambda'), withRegularization);
         case 'SVM Without PCA'
             hyperparams = bestHyperparamsSVM(modelName);
             predictions = modelFunction(xTrain, xTest, yTrain, hyperparams('Kernel'));
         case 'SVM With PCA'
             hyperparams = bestHyperparamsSVM(modelName);
-            [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest);
+            [xTrainReduced, xTestReduced] = DataPreparation.principalComponentAnalysis(xTrain, xTest);
             predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, hyperparams('Kernel'));
     end
 

@@ -5,7 +5,7 @@ classdef GridSearch
         
             cv = cvpartition(size(dataset, 1), 'KFold', nFolds);
         
-            % model array
+            % logistic regression models array
             models = {
                 'Logistic Regression Without PCA', ...
                 @(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xVal, yTrain,  iterations, alpha, lambda, withRegularization), ...
@@ -21,23 +21,23 @@ classdef GridSearch
             bestHyperparams = containers.Map;
             bestMetrics = containers.Map;
         
-            % Ciclo sui modelli
+            % loop over models
             for modelId = 1:2:length(models)
                 modelName = models{modelId};
                 modelFunction = models{modelId + 1};
             
-                % Inizializza i dizionari per salvare le performance e i migliori iperparametri per questo modello
+                % init performances and hyperparams dictiornaries for current model
                 bestHyperparamsPerModel = containers.Map;
                 bestMetricsPerModel = containers.Map;
             
-                % Ciclo sulla griglia degli iperparametri
+                % loop over hyperparams
                 for alpha = 1:length(alphaGrid)
                     for lambda = 1:length(lambdaGrid)
         
-                            % Inizializza i vettori per ogni metrica
+                            % init accuracy array
                             accuracies = zeros(nFolds, 1);
         
-                            % Ciclo sulla k-fold cross-validation
+                            % k-fold cross-validation
                             for fold = 1:nFolds
                                 
                                 % train-val split
@@ -47,15 +47,15 @@ classdef GridSearch
                                 valSet = dataset(valIndices, :);
   
                                 % feature selection
-                                [xTrain, yTrain] = featureSelection(realTrainingSet);
-                                [xVal, yVal] = featureSelection(valSet);
+                                [xTrain, yTrain] = DataPreparation.featureSelection(realTrainingSet);
+                                [xVal, yVal] = DataPreparation.featureSelection(valSet);
                                     
                                 % train and predict
                                 switch modelName 
                                     case 'Logistic Regression Without PCA'
                                         predictions = modelFunction(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization);
                                     case 'Logistic Regression With PCA'
-                                        [xTrainReduced, xValReduced] = principalComponentAnalysis(xTrain, xVal);
+                                        [xTrainReduced, xValReduced] = DataPreparation.principalComponentAnalysis(xTrain, xVal);
                                         predictions = modelFunction(xTrainReduced, xValReduced, yTrain, iterations, alpha, lambda, withRegularization);
                                 end
                     
@@ -63,15 +63,15 @@ classdef GridSearch
                                 confusionMatrix = Metrics.computeConfusionMatrix(yVal, predictions);
                                 accuracy = Metrics.computeAccuracy(confusionMatrix);            
         
-                                % populate metrics array
+                                % populate accuracy array
                                 accuracies(fold) = accuracy;
         
                             end
         
-                            % Calcola le medie delle metriche su tutti i fold
+                            % compute mean of metrics over all folds
                             meanAccuracy = mean(accuracies);
         
-                            % Salvare i risultati se sono migliori dei precedenti
+                            % update results if better than previous
                             if isempty(bestMetricsPerModel) || meanAccuracy > bestMetricsPerModel('Accuracy')
                                 bestMetricsPerModel('Accuracy') = meanAccuracy;
                                 bestHyperparamsPerModel('Alpha') = alphaGrid(alpha);
@@ -80,7 +80,7 @@ classdef GridSearch
                     end
                 end
             
-                % Salvare i risultati per questo modello
+                % save results for current model
                 bestMetrics(modelName) = bestMetricsPerModel;
                 bestHyperparams(modelName) = bestHyperparamsPerModel;
         
@@ -93,7 +93,7 @@ classdef GridSearch
         
             cv = cvpartition(size(dataset, 1), 'KFold', nFolds);
         
-            % model array
+            % svm models array
             models = {
                 'SVM Without PCA', ...
                 @(xTrain, xVal, yTrain, kernel) Models.supportVectorMachine(xTrain, xVal, yTrain, kernel), ...
@@ -109,23 +109,23 @@ classdef GridSearch
             bestMetrics = containers.Map;
             
         
-            % Ciclo sui modelli
+            % loop over all models
             for modelId = 1:2:length(models)
                 modelName = models{modelId};
                 modelFunction = models{modelId + 1};
             
-                % Inizializza i dizionari per salvare le performance e i migliori iperparametri per questo modello
+                % init performances and hyperparams dictiornaries for current model
                 bestHyperparamsPerModel = containers.Map;
                 bestMetricsPerModel = containers.Map;
             
-                % Ciclo sulla griglia degli iperparametri
+                % loop over hyperparams
                 for kernelId = 1:length(kernelGrid)
                     kernel = kernelGrid{kernelId};
         
-                    % Inizializza i vettori per ogni metrica
+                    % init accuracy array
                     accuracies = zeros(nFolds, 1);
         
-                    % Ciclo sulla k-fold cross-validation
+                    % k-fold cross-validation
                     for fold = 1:nFolds
                         
                         % train-val split
@@ -135,15 +135,15 @@ classdef GridSearch
                         valSet = dataset(valIndices, :);
                 
                         % feature selection
-                        [xTrain, yTrain] = featureSelection(realTrainingSet);
-                        [xVal, yVal] = featureSelection(valSet);
+                        [xTrain, yTrain] = DataPreparation.featureSelection(realTrainingSet);
+                        [xVal, yVal] = DataPreparation.featureSelection(valSet);
                             
                         % train and predict
                         switch modelName 
                             case 'SVM Without PCA'
                                 predictions = modelFunction(xTrain, xVal, yTrain, kernel);
                             case 'SVM With PCA'
-                                [xTrainReduced, xValReduced] = principalComponentAnalysis(xTrain, xVal);
+                                [xTrainReduced, xValReduced] = DataPreparation.principalComponentAnalysis(xTrain, xVal);
                                 predictions = modelFunction(xTrainReduced, xValReduced, yTrain, kernel);
                         end
             
@@ -151,22 +151,22 @@ classdef GridSearch
                         confusionMatrix = Metrics.computeConfusionMatrix(yVal, predictions);
                         accuracy = Metrics.computeAccuracy(confusionMatrix);
             
-                        % populate metrics array
+                        % populate accuracy array
                         accuracies(fold) = accuracy;
         
                     end
         
-                    % Calcola le medie delle metriche su tutti i fold
+                    % compute mean of metrics over all folds
                     meanAccuracy = mean(accuracies);
         
-                    % Salvare i risultati se sono migliori dei precedenti
+                    % update results if better than previous
                     if isempty(bestMetricsPerModel) || meanAccuracy > bestMetricsPerModel('Accuracy')
                         bestMetricsPerModel('Accuracy') = meanAccuracy;
                         bestHyperparamsPerModel('Kernel') = kernel;
                     end
                 end
             
-                % Salvare i risultati per questo modello
+                % save results for current model
                 bestMetrics(modelName) = bestMetricsPerModel;
                 bestHyperparams(modelName) = bestHyperparamsPerModel;
         
