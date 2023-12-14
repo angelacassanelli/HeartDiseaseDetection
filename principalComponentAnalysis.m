@@ -14,7 +14,6 @@ function [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTes
     % visualize the explained variance
     % plotExplainedVariance(explained)
     
-    % use the reduced features for further analysis
     % disp(['Selected ', num2str(numComponents), ' principal components.']);
 
 end

@@ -7,10 +7,10 @@ rng(42); % per la riproducibilità
 dataset = readtable('dataset/HeartDisease.csv');
 
 % Data Exploration
-dataset = dataExploration(dataset);
+dataset = DataPreparation.dataExploration(dataset);
 
 % Data Cleaning and Preprocessing
-dataset = dataPreprocessing(dataset);
+dataset = DataPreparation.dataPreprocessing(dataset);
 
 
 %% Cross Validation for Logistic Regression Models
@@ -19,7 +19,7 @@ nFolds = 5;
 iterations = 100;
 withRegularization = true;
 
-[bestHyperparams, bestMetrics] = gridSearchLR(dataset, nFolds, iterations, withRegularization);
+[bestHyperparams, bestMetrics] = GridSearch.gridSearchLR(dataset, nFolds, iterations, withRegularization);
 
 % show results
 fprintf('\nBEST PERFORMANCE FOR LOGISTIC REGRESSION:\n\n');
@@ -53,7 +53,7 @@ end
 
 nFolds = 5;
 
-[bestHyperparams, bestMetrics] = gridSearchSVM(dataset, nFolds);
+[bestHyperparams, bestMetrics] = GridSearch.gridSearchSVM(dataset, nFolds);
 
 % show results
 fprintf('\nBEST PERFORMANCES FOR SUPPORT VECTOR MACHINE:\n\n');
