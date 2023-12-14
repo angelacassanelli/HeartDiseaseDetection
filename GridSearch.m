@@ -43,15 +43,11 @@ classdef GridSearch
                                 % train-val split
                                 valIndices = test(cv, fold);
                                 trainIndices = training(cv, fold);
-                                trainingSet = dataset(trainIndices, :);
+                                realTrainingSet = dataset(trainIndices, :);
                                 valSet = dataset(valIndices, :);
-                            
-                                % z-score normalization of numerical features
-                                trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
-                                valSet{:, Utils.numericalFeatures} = zscore(valSet{:, Utils.numericalFeatures});
-                        
+  
                                 % feature selection
-                                [xTrain, yTrain] = featureSelection(trainingSet);
+                                [xTrain, yTrain] = featureSelection(realTrainingSet);
                                 [xVal, yVal] = featureSelection(valSet);
                                     
                                 % train and predict
@@ -135,15 +131,11 @@ classdef GridSearch
                         % train-val split
                         valIndices = test(cv, fold);
                         trainIndices = training(cv, fold);
-                        trainingSet = dataset(trainIndices, :);
+                        realTrainingSet = dataset(trainIndices, :);
                         valSet = dataset(valIndices, :);
-                    
-                        % z-score normalization of numerical features
-                        trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
-                        valSet{:, Utils.numericalFeatures} = zscore(valSet{:, Utils.numericalFeatures});
                 
                         % feature selection
-                        [xTrain, yTrain] = featureSelection(trainingSet);
+                        [xTrain, yTrain] = featureSelection(realTrainingSet);
                         [xVal, yVal] = featureSelection(valSet);
                             
                         % train and predict

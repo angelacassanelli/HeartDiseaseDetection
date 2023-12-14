@@ -1,9 +1,7 @@
 classdef Metrics
     methods (Static)
 
-        function [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predictions)        
-            disp('Compute metrics')
-        
+        function [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predictions)                
             % compute confusion matrix
             confusionMatrix = Metrics.computeConfusionMatrix(yTest, predictions);
         
@@ -56,9 +54,9 @@ classdef Metrics
         
             [fpr, tpr, ~, auc] = perfcurve(yTest, predictions, 1);    
             
-            disp(['Area sotto la curva ROC (AUC):', auc])
+            disp(['Area sotto la curva ROC (AUC):', num2str(auc)])
         
-            plot ROC curve
+            % plot ROC curve
             figure;
             plot(fpr, tpr, 'LineWidth', 2);
             xlabel('False Positive Rate');
