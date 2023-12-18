@@ -1,40 +1,21 @@
 classdef DataPreparation
-    methods (Static)
-        
-        function dataset = dataExploration(dataset)         
-            % Data Exploration
+    methods (Static)              
 
-            % initial dataset
-            head(dataset);
-            summary(dataset);           
-        
-            % convert categorical features to numerical
-            for i = 1 : size(Utils.categoricalFeatures)
-                featureName = Utils.categoricalFeatures(i);
-                dataset.(featureName) = grp2idx(dataset.(featureName));
-            end        
-            
-            % plot data distributions with histograms
-            Plots.plotDataDistributions(dataset, "Data Exploration")                
-        end
-
-        function dataset = dataPreprocessing(dataset)        
-            % Data Preprocessing
+        function dataset = dataCleaning(dataset)        
+            % Data Cleaning
         
             % remove rows with missing data > 100
             threshold = 100;          
             missingValuesPerRow = sum(ismissing(dataset), 2); % sum along colums (dim 2)
             rowsToRemove = missingValuesPerRow >= threshold;        
-            dataset = dataset(~rowsToRemove, :);
-        
+            dataset = dataset(~rowsToRemove, :);        
         
             % fill rows with missing data for categorical features
             for i = 1 : size(Utils.categoricalFeatures)
                 currentFeature = Utils.categoricalFeatures(i); 
                 fillingValue = mode(dataset.(currentFeature));
                 dataset(:, currentFeature) = fillmissing(dataset(:, currentFeature), 'constant', fillingValue);
-            end
-        
+            end        
         
             % fill rows with missing data for numerical features
             for i = 1 : size(Utils.numericalFeatures)
@@ -42,9 +23,8 @@ classdef DataPreparation
                 fillingValue = mean(dataset.(currentFeature), 'omitnan');
                 dataset(:, currentFeature) = fillmissing(dataset(:, currentFeature), 'constant', fillingValue);
             end
-        
-        
-            % outlier removal
+
+            % outlier removal            
             for i = 1 : size(Utils.numericalFeatures)
                 currentFeature = Utils.numericalFeatures(i); 
         
@@ -61,17 +41,22 @@ classdef DataPreparation
         
                 % outlier removal
                 dataset.(currentFeature)(outliersIndices) = NaN;
-                dataset = rmmissing(dataset);
-                
+                dataset = rmmissing(dataset);               
             end
-        
+
             % final dataset
             head(dataset);
             summary(dataset);   
-        
-            % plot data distibution with istograms
-            Plots.plotDataDistributions(dataset, "Data Preprocessing")        
         end
+
+        function dataset = featureEngineering(dataset)
+            % convert categorical features to numerical
+            for i = 1 : size(Utils.categoricalFeatures)
+                featureName = Utils.categoricalFeatures(i);
+                dataset.(featureName) = grp2idx(dataset.(featureName));
+            end      
+        end
+        
 
         function [trainingSet, testSet] = trainTestSplit(dataset)
             % hold out train-test split
