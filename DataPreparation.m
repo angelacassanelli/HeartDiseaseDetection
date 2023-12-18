@@ -6,7 +6,7 @@ classdef DataPreparation
         
             % remove rows with missing data > 100
             threshold = 100;          
-            missingValuesPerRow = sum(ismissing(dataset), 2); % sum along colums (dim 2)
+            missingValuesPerRow = sum(ismissing(dataset), 2); % sum along columns (dim 2)
             rowsToRemove = missingValuesPerRow >= threshold;        
             dataset = dataset(~rowsToRemove, :);        
         
@@ -33,7 +33,7 @@ classdef DataPreparation
                 q25 = prctile(dataset.(currentFeature), 25, 'all');
                 iqrValues = q75 - q25;
         
-                % values greater than thresold are outliers
+                % values greater than thresh    old are outliers
                 threshold = 3; 
         
                 % indexes of outliers
