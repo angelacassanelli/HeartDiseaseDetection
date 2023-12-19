@@ -1,11 +1,11 @@
 classdef Metrics
     methods (Static)
 
-        function [accuracy, precision, recall, f1Score] = computeMetrics(yTest, predictions)                
+        function [accuracy, precision, recall, f1Score] = computeClassificationMetrics(yTest, predictions)                
             % compute confusion matrix
             confusionMatrix = Metrics.computeConfusionMatrix(yTest, predictions);
         
-            % compute metrics (accuracy, precision, recall, f1-score)
+            % compute classification metrics (accuracy, precision, recall, f1-score)
             accuracy = Metrics.computeAccuracy(confusionMatrix);
             disp(['Accuracy: ', num2str(accuracy)]);
         
@@ -44,19 +44,26 @@ classdef Metrics
             f1Score = 2 * (precision * recall) / (precision + recall);
         end
 
-        function auc = computeROCCurve(yTest, predictions)
-            % compute ROC curve
-            % fpr: False Positive Rate, FPR
-            % tpr: True Positive Rate, TPR
-            % t: Threshold values corresponding to points on the ROC curve
-            % auc: Area under the ROC curve
-            % param '1' of 'perfcurve' indicates the positive class
+        function [meanSilhouette, jaccardIndex] = computeClusteringMetrics(xTest, yTest, predictions)                
+            % compute clustering metrics (meanSilhouette, jaccardIndex)
+            meanSilhouette = Metrics.computeSilhouette(xTest, predictions);
+            disp(['Mean Silhouette: ', num2str(meanSilhouette)]);
         
-            [fpr, tpr, ~, auc] = perfcurve(yTest, predictions, 1);    
-            disp(['Area sotto la curva ROC (AUC):', num2str(auc)])
-        
-            % plot ROC curve
-            Plots.plotROCCurve(fpr, tpr)      
+            jaccardIndex = Metrics.computeJaccardIndex(yTest, predictions);
+            disp(['Jaccard Index: ', num2str(jaccardIndex)]);
+        end
+
+        function meanSilhouette = computeSilhouette(xTest, predictions)
+            % compute mean silhouette value
+            silhouette_values = silhouette(xTest, predictions);
+            meanSilhouette = mean(silhouette_values);
+        end
+
+        function jaccardIndex = computeJaccardIndex(yTest, predictions)
+            % compute Jaccard index for two binary vectors        
+            intersection = sum(yTest & predictions);
+            unionSet = sum(yTest | predictions);        
+            jaccardIndex = intersection / unionSet;
         end
         
     end

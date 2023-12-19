@@ -37,15 +37,5 @@ classdef Plots
             title('Convergenza della regressione logistica');        
         end
 
-        function plotROCCurve(fpr, tpr)
-            % plot ROC Curve
-            figure;
-            plot(fpr, tpr, 'LineWidth', 2);
-            xlabel('False Positive Rate');
-            ylabel('True Positive Rate');
-            title('Curva ROC');
-            grid on;    
-        end
-
     end
 end

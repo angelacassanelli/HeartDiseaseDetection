@@ -55,8 +55,12 @@ classdef DataPreparation
                 featureName = Utils.categoricalFeatures(i);
                 dataset.(featureName) = grp2idx(dataset.(featureName));
             end      
+        end        
+
+        function dataset = zscoreNormalization(dataset)
+            % z-score normalization
+            dataset{:, Utils.numericalFeatures} = zscore(dataset{:, Utils.numericalFeatures});
         end
-        
 
         function [trainingSet, testSet] = trainTestSplit(dataset)
             % hold out train-test split
@@ -66,10 +70,9 @@ classdef DataPreparation
             trainingSet = dataset(training(cv), :);
             testSet = dataset(test(cv), :);
         
-            % z-score normalisation
-            trainingSet{:, Utils.numericalFeatures} = zscore(trainingSet{:, Utils.numericalFeatures});
-            testSet{:, Utils.numericalFeatures} = zscore(testSet{:, Utils.numericalFeatures});
-        
+            % z-score normalization
+            trainingSet = DataPreparation.zscoreNormalization(trainingSet);
+            testSet = DataPreparation.zscoreNormalization(testSet);
         end 
 
         function [x, y] = featureSelection(dataset)

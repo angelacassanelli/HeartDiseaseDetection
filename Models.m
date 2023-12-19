@@ -1,9 +1,9 @@
 classdef Models
     methods (Static)
 
+        % Logistic Regression from scratch
         function predictions = logisticRegression(xTrain, xVal, yTrain, iterations, alpha, lambda, withRegularization)
-        
-            % Logistic Regression from scratch
+            rng(42); % seed for reproducibility
             
             theta = zeros(size(xTrain, 2), 1);
             costHistory = zeros(iterations, 1);
@@ -44,17 +44,53 @@ classdef Models
         
             end
             
+            % predict on validationSet
             predictions = sigmoid(xVal * theta);
                 
         end
 
-        function predictions = supportVectorMachine(xTrain, xVal, yTrain, kernel)        
-            % perform SVM classification
-            svmModel = fitcsvm(xTrain, yTrain, 'KernelFunction', kernel);
-            predictions = predict(svmModel, xVal);
-            % disp(svmModel);        
-        end        
+        
+        % SVM classification
+        function predictions = supportVectorMachine(xTrain, xVal, yTrain, kernel)   
+            rng(42); % seed for Reproducibility
 
+            svmModel = fitcsvm(xTrain, yTrain, 'KernelFunction', kernel);
+            
+            % predict on validationSet
+            predictions = predict(svmModel, xVal);
+        end     
+
+        % kMeans clustering
+        function predictions = kMeans(xTrain, xTest, iterations, numClusters)
+            rng(42); % seed for Reproducibility
+
+            % random init centroids
+            idx = randi(numClusters, size(xTrain, 1), 1);
+            centroids = zeros(numClusters, size(xTrain, 2));
+
+            for i = 1:numClusters
+                centroids(i, :) = mean(xTrain(idx == i, :));
+            end
+
+            for iter = 1:iterations
+
+                % assign each observation to the nearest centroid
+                distances = pdist2(xTrain, centroids);
+                [~, idx] = min(distances, [], 2);
+
+                % update centroids
+                for i = 1:numClusters
+                    centroids(i, :) = mean(xTrain(idx == i, :));
+                end
+            end
+
+            % predict on validationSet
+            distances = pdist2(xTest, centroids);
+            [~, idx] = min(distances, [], 2);
+            predictions = idx - 1;   
+
+        end
+    
     end
 end
 

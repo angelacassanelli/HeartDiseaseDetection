@@ -17,7 +17,7 @@ dataset = DataPreparation.featureEngineering(dataset);
 % Data Visualization
 DataDiscovery.dataVisualization(dataset, "Data Exploration");
 
-% Data Preparation Data Cleaning
+% Data Preparation
 dataset = DataPreparation.dataCleaning(dataset);
 
 % Data Visualization
@@ -99,67 +99,56 @@ end
 
 iterations = 100;
 withRegularization = true;
-
 numClusters = 2;
 
 [xTrain, yTrain] = DataPreparation.featureSelection(trainingSet);
 [xTest, yTest] = DataPreparation.featureSelection(testSet);
 [xTrainReduced, xTestReduced] = DataPreparation.principalComponentAnalysis(xTrain, xTest);
 
+fprintf('\nFINAL EVALUATION FOR Logistic Regression Without PCA:\n');
 
-models = {
-    'Logistic Regression Without PCA', ...
-    @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization), ...
-    'Logistic Regression With PCA', ...
-    @(xTrain, xTest, yTrain, iterations, alpha, lambda, withRegularization) Models.logisticRegression(xTrain, xTest, yTrain,  iterations, alpha, lambda, withRegularization), ...
-    'SVM Without PCA', ...
-    @(xTrain, xTest, yTrain, kernel) Models.supportVectorMachine(xTrain, xTest, yTrain, kernel), ...
-    'SVM With PCA', ...
-    @(xTrain, xTest, yTrain, kernel) Models.supportVectorMachine(xTrain, xTest, yTrain, kernel), ...
-    'K-Means Without PCA', ...
-    @(xTrain, xTest, iterations, numClusters) Models.kMeans(xTrain, xTest, iterations, numClusters), ...
-    'K-Means With PCA', ...
-    @(xTrain, xTest, iterations, numClusters) Models.kMeans(xTrain, xTest, iterations, numClusters)
-};
+hyperparams = bestHyperparamsLR('Logistic Regression Without PCA');
+predictions = Models.logisticRegression(xTrain, xTest, yTrain, iterations, hyperparams('Alpha'), hyperparams('Lambda'), withRegularization);
+Metrics.computeClassificationMetrics(yTest, predictions);
+disp('-----------------------------------------------');
 
-% Final Evaluation of all Models
-for modelIdx = 1:2:length(models)
-    modelName = models{modelIdx};
-    modelFunction = models{modelIdx + 1};
 
-    fprintf(['\nFINAL EVALUATION FOR ', modelName, ':\n']);
+fprintf('\nFINAL EVALUATION FOR Logistic Regression With PCA:\n');
 
-    switch modelName 
-        
-        case 'Logistic Regression Without PCA'
-            hyperparams = bestHyperparamsLR(modelName);
-            predictions = modelFunction(xTrain, xTest, yTrain, iterations, hyperparams('Alpha'), hyperparams('Lambda'), withRegularization);
-            Metrics.computeClassificationMetrics(yTest, predictions);
+hyperparams = bestHyperparamsLR('Logistic Regression Without PCA');
+predictions = Models.logisticRegression(xTrainReduced, xTestReduced, yTrain, iterations, hyperparams('Alpha'), hyperparams('Lambda'), withRegularization);
+Metrics.computeClassificationMetrics(yTest, predictions);
+disp('-----------------------------------------------');
 
-        case 'Logistic Regression With PCA'
-            hyperparams = bestHyperparamsLR(modelName);
-            predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, iterations, hyperparams('Alpha'), hyperparams('Lambda'), withRegularization);
-            Metrics.computeClassificationMetrics(yTest, predictions);
 
-        case 'SVM Without PCA'
-            hyperparams = bestHyperparamsSVM(modelName);
-            predictions = modelFunction(xTrain, xTest, yTrain, hyperparams('Kernel'));
-            Metrics.computeClassificationMetrics(yTest, predictions);
+fprintf('\nFINAL EVALUATION FOR SVM Without PCA:\n');
 
-        case 'SVM With PCA'
-            hyperparams = bestHyperparamsSVM(modelName);
-            predictions = modelFunction(xTrainReduced, xTestReduced, yTrain, hyperparams('Kernel'));
-            Metrics.computeClassificationMetrics(yTest, predictions);
+hyperparams = bestHyperparamsSVM('SVM Without PCA');
+predictions = Models.supportVectorMachine(xTrain, xTest, yTrain, hyperparams('Kernel'));
+Metrics.computeClassificationMetrics(yTest, predictions);
+disp('-----------------------------------------------');
 
-        case 'K-Means Without PCA'
-            predictions = modelFunction(xTrain, xTest, iterations, numClusters);
-            Metrics.computeClusteringMetrics(xTest, yTest, predictions);
-        
-        case 'K-Means With PCA'            
-            predictions = modelFunction(xTrainReduced, xTestReduced, iterations, numClusters);
-            Metrics.computeClusteringMetrics(xTestReduced, yTest, predictions);
-            
-    end
 
-    disp('-----------------------------------------------');
-end
+fprintf('\nFINAL EVALUATION FOR SVM With PCA:\n');
+
+hyperparams = bestHyperparamsSVM('SVM With PCA');
+predictions = Models.supportVectorMachine(xTrainReduced, xTestReduced, yTrain, hyperparams('Kernel'));
+Metrics.computeClassificationMetrics(yTest, predictions);
+disp('-----------------------------------------------');
+
+
+fprintf('\nK-Means Without PCA:\n');
+
+predictions = Models.kMeans(xTrain, xTest, iterations, numClusters);
+Metrics.computeClusteringMetrics(xTest, yTest, predictions);
+Metrics.computeClassificationMetrics(yTest, predictions);
+disp('-----------------------------------------------');
+
+
+fprintf('\nK-Means With PCA:\n');
+
+predictions = Models.kMeans(xTrainReduced, xTestReduced, iterations, numClusters);
+Metrics.computeClusteringMetrics(xTestReduced, yTest, predictions);
+Metrics.computeClassificationMetrics(yTest, predictions);
+disp('-----------------------------------------------');
+
