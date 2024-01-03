@@ -14,14 +14,8 @@ dataset = DataDiscovery.dataExploration(dataset);
 % Data Preparation - Feature Engineering
 dataset = DataPreparation.featureEngineering(dataset);
 
-% Data Visualization
-DataDiscovery.dataVisualization(dataset, "Data Exploration");
-
 % Data Preparation Data Cleaning
 dataset = DataPreparation.dataCleaning(dataset);
-
-% Data Visualization
-DataDiscovery.dataVisualization(dataset, "Data Preparation");
 
 % Train-Test split
 [trainingSet, testSet] = DataPreparation.trainTestSplit(dataset);
@@ -37,7 +31,7 @@ withRegularization = true;
 [bestHyperparamsLR, bestMetricsLR] = GridSearch.gridSearchLR(trainingSet, nFolds, iterations, withRegularization);
 
 % Show Results
-fprintf('\nBEST PERFORMANCE FOR LOGISTIC REGRESSION:\n\n');
+fprintf('\nBEST PERFORMANCES FOR LOGISTIC REGRESSION:\n\n');
 
 fprintf('\nBest hyperparams:\n\n');
 keysHyperparamsLR = keys(bestHyperparamsLR);
