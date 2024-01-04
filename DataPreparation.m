@@ -57,9 +57,12 @@ classdef DataPreparation
             end      
         end        
 
-        function dataset = zscoreNormalization(dataset)
+        function [trainingSet, testSet] = zscoreNormalization(trainingSet, testSet)
             % z-score normalization
-            dataset{:, Utils.numericalFeatures} = zscore(dataset{:, Utils.numericalFeatures});
+            meanTrain = mean(trainingSet{:, Utils.numericalFeatures});
+            stdTrain = std(trainingSet{:, Utils.numericalFeatures});
+            trainingSet{:, Utils.numericalFeatures}  = (trainingSet{:, Utils.numericalFeatures}  - meanTrain) ./ stdTrain;
+            testSet{:, Utils.numericalFeatures}  = (testSet{:, Utils.numericalFeatures}  - meanTrain) ./ stdTrain;        
         end
 
         function [trainingSet, testSet] = trainTestSplit(dataset)
@@ -71,8 +74,7 @@ classdef DataPreparation
             testSet = dataset(test(cv), :);
         
             % z-score normalization
-            trainingSet = DataPreparation.zscoreNormalization(trainingSet);
-            testSet = DataPreparation.zscoreNormalization(testSet);
+            [trainingSet, testSet] = DataPreparation.zscoreNormalization(trainingSet, testSet);
         end 
 
         function [x, y] = featureSelection(dataset)
@@ -93,15 +95,15 @@ classdef DataPreparation
 
         function [xTrainReduced, xTestReduced] = principalComponentAnalysis(xTrain, xTest)
             % PCA
-            [coeff, score, ~, ~, explained] = pca(xTrain);
+            [coeff, ~, ~, ~, explained] = pca(xTrain);
             
             % choose the number of principal components that retains 95% of variance
             desiredVariance = 95; 
             numComponents = find(cumsum(explained) >= desiredVariance, 1);
         
-            % retain only the selected number of principal components
-            xTrainReduced = score(:, 1:numComponents); 
-            xTestReduced = (xTest - mean(xTrain)) ./ std(xTrain) * coeff(:, 1:numComponents); 
+            % retain only the selected number of principal components            
+            xTrainReduced = xTrain * coeff(:, 1:numComponents);
+            xTestReduced = xTest * coeff(:, 1:numComponents); 
             
             % visualize the explained variance
             % plotExplainedVariance(explained)
