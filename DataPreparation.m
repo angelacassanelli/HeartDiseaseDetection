@@ -4,8 +4,8 @@ classdef DataPreparation
         function dataset = dataCleaning(dataset)        
             % Data Cleaning
         
-            % remove rows with missing data > 100
-            threshold = 100;          
+            % remove rows with missing data > 10
+            threshold = 10;          
             missingValuesPerRow = sum(ismissing(dataset), 2); % sum along columns (dim 2)
             rowsToRemove = missingValuesPerRow >= threshold;        
             dataset = dataset(~rowsToRemove, :);        
