@@ -8,11 +8,5 @@ classdef DataDiscovery
             summary(dataset);                        
         end
 
-        function dataVisualization(dataset, figName)
-            % data visualization
-            % plot data distributions with histograms
-            Plots.plotDataDistributions(dataset, figName)      
-        end
-
     end
 end

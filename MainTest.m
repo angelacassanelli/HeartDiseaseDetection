@@ -14,14 +14,8 @@ dataset = DataDiscovery.dataExploration(dataset);
 % Data Preparation - Feature Engineering
 dataset = DataPreparation.featureEngineering(dataset);
 
-% Data Visualization
-DataDiscovery.dataVisualization(dataset, "Data Exploration");
-
 % Data Preparation
 dataset = DataPreparation.dataCleaning(dataset);
-
-% Data Visualization
-DataDiscovery.dataVisualization(dataset, "Data Preparation");
 
 % Train-Test split
 [trainingSet, testSet] = DataPreparation.trainTestSplit(dataset);
