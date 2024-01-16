@@ -52,7 +52,7 @@ for i = 1:length(keysMetricsLR)
     metrics = bestMetricsLR(modelName);
 
     disp(['Model: ', modelName]);
-    disp(['Accuracy: ', num2str(metrics('Accuracy'))]);
+    disp(['Recall: ', num2str(metrics('Recall'))]);
     disp('-----------------------------------------------');
 end
 
@@ -85,7 +85,7 @@ for i = 1:length(keysMetricsSVM)
     metrics = bestMetricsSVM(modelName);
 
     disp(['Model: ', modelName]);
-    disp(['Accuracy: ', num2str(metrics('Accuracy'))]);
+    disp(['Recall: ', num2str(metrics('Recall'))]);
     disp('-----------------------------------------------');
 end
 

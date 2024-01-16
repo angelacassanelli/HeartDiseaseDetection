@@ -31,11 +31,16 @@ classdef GridSearch
                 bestMetricsPerModel = containers.Map;
             
                 % loop over hyperparams
-                for alpha = 1:length(alphaGrid)
-                    for lambda = 1:length(lambdaGrid)
+                for alphaId = 1:length(alphaGrid)
+                    for lambdaId = 1:length(lambdaGrid)
+                            alpha = alphaGrid(alphaId);
+                            lambda = lambdaGrid(lambdaId);
         
                             % init accuracy array
                             accuracies = zeros(nFolds, 1);
+                            precisions = zeros(nFolds, 1);
+                            recalls = zeros(nFolds, 1);
+                            f1Scores = zeros(nFolds, 1);
         
                             % k-fold cross-validation
                             for fold = 1:nFolds
@@ -61,21 +66,42 @@ classdef GridSearch
                     
                                 % compute metrics
                                 confusionMatrix = Metrics.computeConfusionMatrix(yVal, predictions);
-                                accuracy = Metrics.computeAccuracy(confusionMatrix);            
+                                accuracy = Metrics.computeAccuracy(confusionMatrix);
+                                precision = Metrics.computePrecision(confusionMatrix);
+                                recall = Metrics.computeRecall(confusionMatrix);
+                                f1Score = Metrics.computeF1Score(precision, recall);
         
                                 % populate accuracy array
                                 accuracies(fold) = accuracy;
+                                precisions(fold) = precision;
+                                recalls(fold) = recall;
+                                f1Scores(fold) = f1Score;
         
                             end
         
                             % compute mean of metrics over all folds
                             meanAccuracy = mean(accuracies);
+                            meanPrecision = mean(precisions);
+                            meanRecall = mean(recalls);
+                            meanF1Score = mean(f1Scores);
+
+                            % print all metrics for hyperparams
+                            fprintf('\n');
+                            disp(['Model: ', modelName]);
+                            disp('Metrics per hyperparams:');
+                            disp(['Alpha: ', num2str(alpha)]);
+                            disp(['Lambda: ', num2str(lambda)]);
+                            disp(['Accuracy: ', num2str(meanAccuracy)]);
+                            disp(['Precision: ', num2str(meanPrecision)]);
+                            disp(['Recall: ', num2str(meanRecall)]);
+                            disp(['F1Score: ', num2str(meanF1Score)]);
+                            fprintf('-----------------------------------------------\n');
         
                             % update results if better than previous
-                            if isempty(bestMetricsPerModel) || meanAccuracy > bestMetricsPerModel('Accuracy')
-                                bestMetricsPerModel('Accuracy') = meanAccuracy;
-                                bestHyperparamsPerModel('Alpha') = alphaGrid(alpha);
-                                bestHyperparamsPerModel('Lambda') = lambdaGrid(lambda);
+                            if isempty(bestMetricsPerModel) || meanRecall > bestMetricsPerModel('Recall')
+                                bestMetricsPerModel('Recall') = meanRecall;                             
+                                bestHyperparamsPerModel('Alpha') = alpha;
+                                bestHyperparamsPerModel('Lambda') = lambda;
                             end
                     end
                 end
@@ -124,6 +150,9 @@ classdef GridSearch
         
                     % init accuracy array
                     accuracies = zeros(nFolds, 1);
+                    precisions = zeros(nFolds, 1);
+                    recalls = zeros(nFolds, 1);
+                    f1Scores = zeros(nFolds, 1);
         
                     % k-fold cross-validation
                     for fold = 1:nFolds
@@ -150,18 +179,38 @@ classdef GridSearch
                         % compute metrics
                         confusionMatrix = Metrics.computeConfusionMatrix(yVal, predictions);
                         accuracy = Metrics.computeAccuracy(confusionMatrix);
-            
+                        precision = Metrics.computePrecision(confusionMatrix);
+                        recall = Metrics.computeRecall(confusionMatrix);
+                        f1Score = Metrics.computeF1Score(precision, recall);
+
                         % populate accuracy array
                         accuracies(fold) = accuracy;
+                        precisions(fold) = precision;
+                        recalls(fold) = recall;
+                        f1Scores(fold) = f1Score;
         
                     end
         
                     % compute mean of metrics over all folds
                     meanAccuracy = mean(accuracies);
+                    meanPrecision = mean(precisions);
+                    meanRecall = mean(recalls);
+                    meanF1Score = mean(f1Scores);
         
+                    % print all metrics for hyperparams
+                    fprintf('\n');
+                    disp(['Model: ', modelName]);
+                    disp('Metrics per hyperparams:');
+                    disp(['Kernel: ', kernel]);
+                    disp(['Accuracy: ', num2str(meanAccuracy)]);
+                    disp(['Precision: ', num2str(meanPrecision)]);
+                    disp(['Recall: ', num2str(meanRecall)]);
+                    disp(['F1Score: ', num2str(meanF1Score)]);
+                    fprintf('-----------------------------------------------\n');
+
                     % update results if better than previous
-                    if isempty(bestMetricsPerModel) || meanAccuracy > bestMetricsPerModel('Accuracy')
-                        bestMetricsPerModel('Accuracy') = meanAccuracy;
+                    if isempty(bestMetricsPerModel) || meanRecall > bestMetricsPerModel('Recall')
+                        bestMetricsPerModel('Recall') = meanRecall;
                         bestHyperparamsPerModel('Kernel') = kernel;
                     end
                 end
