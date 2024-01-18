@@ -104,12 +104,7 @@ classdef DataPreparation
             % retain only the selected number of principal components            
             xTrainReduced = xTrain * coeff(:, 1:numComponents);
             xTestReduced = xTest * coeff(:, 1:numComponents); 
-            
-            % visualize the explained variance
-            % plotExplainedVariance(explained)
-            
-            % disp(['Selected ', num2str(numComponents), ' principal components.']);
-        
+                               
         end
         
     end
