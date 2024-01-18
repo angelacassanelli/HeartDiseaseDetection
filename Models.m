@@ -76,7 +76,7 @@ classdef Models
 
                 % assign each observation to the nearest centroid
                 distances = pdist2(xTrain, centroids);
-                [~, idx] = min(distances, [], 2);
+                [~, idx] = min(distances, [], 2); 
 
                 % update centroids
                 for i = 1:numClusters

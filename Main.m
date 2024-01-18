@@ -26,6 +26,7 @@ dataset = DataPreparation.dataCleaning(dataset);
 nFolds = 5;
 iterations = 100;
 withRegularization = true;
+numClusters = 2;
 
 % Cross Validation with Grid Search for Logistic Regression models
 [bestHyperparamsLR, bestMetricsLR] = GridSearch.gridSearchLR(trainingSet, nFolds, iterations, withRegularization);
@@ -59,8 +60,6 @@ end
 
 %% Cross Validation for SVM Models
 
-nFolds = 5;
-
 % Cross Validation with Grid Search for SVM models
 [bestHyperparamsSVM, bestMetricsSVM] = GridSearch.gridSearchSVM(trainingSet, nFolds);
 
@@ -90,11 +89,6 @@ for i = 1:length(keysMetricsSVM)
 end
 
 %% Final Evaluation
-
-iterations = 100;
-withRegularization = true;
-
-numClusters = 2;
 
 [xTrain, yTrain] = DataPreparation.featureSelection(trainingSet);
 [xTest, yTest] = DataPreparation.featureSelection(testSet);
