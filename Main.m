@@ -24,7 +24,7 @@ dataset = DataPreparation.dataCleaning(dataset);
 %% Cross Validation for Logistic Regression Models
 
 nFolds = 5;
-iterations = 100;
+iterations = 1000;
 withRegularization = true;
 numClusters = 2;
 
