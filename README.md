@@ -16,8 +16,7 @@ Run my project locally following these simple steps:
 *  Clone the repo:
 
 ```sh
-git clone https://<img width="568" alt="image" src="https://github.com/angelacassanelli/HeartDiseaseDetection/assets/80519365/e6ffbf4a-5c89-40e1-885a-75aa9e0c4910">
-github.com/angelacassanelli/HeartDiseaseDetection.git
+git clone https://github.com/angelacassanelli/HeartDiseaseDetection.git
 ```
 
 * Open `Main.m` in MATLAB and run it.
