@@ -34,4 +34,4 @@ git clone https://github.com/angelacassanelli/HeartDiseaseDetection.git
 
 
 ## 🚀 About Me
-I'm a MSc Computer Science Engineering Student at Polytechnic Univeristy of Bari and this is my project work for Statistical and Matematical Methods exam.
+I'm a MSc Computer Science Engineering Student at Polytechnic Univeristy of Bari and this is my project work for Statistical and Matematical Methods for Artificial Intelligence exam.
